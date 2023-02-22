@@ -1,0 +1,604 @@
+<!doctype html>
+<html>
+    <head>
+        <title>FRC #7589 | Scouting</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./app.css" rel="stylesheet">
+        <label href="./manifest.json" rel="manifest">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" type="text/javascript"></script>
+        <script src="./moment.min.js" type="text/javascript"></script>
+        <script src="./html5-qrcode.min.js" type="text/javascript"></script>
+        <script src="./xlsx.full.min.js" type="text/javascript"></script> 
+        <script>
+            const TBA_KEY = localStorage.getItem("TBA_KEY");
+
+            function tba_available() {
+                return typeof TBA_KEY !== null;
+            }
+
+            if ('serviceWorker' in navigator) {
+                console.log("Registering service worker...");
+                navigator.serviceWorker.register('service-worker.js').then(function(reg){
+                    console.log("Register SUCCESS");
+                }).catch(function(err) {
+                    console.log("Register FAILED", err);
+                });
+            }
+        </script>
+    </head>
+    <body class="p-5">
+        <!--Top Bar-->
+        <div class="fixed top-0 left-0 w-full h-14 md:h-16 bg-blue-600 z-30 py-1.5 px-3 sm:px-3.5">
+            <div class="max-w-4xl mx-auto h-full flex items-center justify-between">
+                <div class="relative pb-3.5 pr-1" onclick="showPage('teamIndexScreen')">
+                    <h1 class="md:text-2xl text-xl text-blue-50">FRC #7589</h1>
+                    <span class="absolute bottom-0 text-white">Scouting</span>
+                </div>
+            </div>
+        </div>
+
+        <!--Contents-->
+
+        <div class="max-w-4xl mx-auto mt-14 md:mt-16">
+            <!-- Team index-->
+            <div class="w-full space-y-3 hidden" id="teamIndexScreen">
+                <button 
+                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="updateSetting()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>                      
+                    <span>Change Setting</span>
+                </button>
+                <button 
+                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="exportAll()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Export All</span>
+                </button>
+                <button 
+                    id="tbaAddTeamBtn"
+                    class="hidden justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="addTeamFromTBA()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+                    </svg>                      
+                    <span>Add Teams through Event(TBA)</span>
+                </button>
+                <button 
+                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="quickRecord()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>                                          
+                    <span>Quick Record</span>
+                </button>
+                <h1 class="text-center text-2xl lg:text-4xl text-blue-800">Teams</h1>
+                <div class="flex flex-col items-center justify-center w-full space-y-3" id="team-index">
+                    <div class="h-screen w-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>                          
+                    </div>
+                </div>
+                <button 
+                    class="z-30 fixed bottom-3 right-3 rounded-full w-14 h-14 lg:w-16 lg:h-16 text-blue-200 bg-blue-700 flex items-center justify-center text-center text-3xl"
+                    onclick="addTeam()">
+                    <span class="mb-1 lg:mb-1">+</span>
+                </button>
+            </div>
+
+            <!-- Show Team -->
+            <div class="w-full space-y-3 hidden" id="teamViewScreen">
+                <h1 class="text-center text-2xl lg:text-4xl text-blue-800">Team #<span id="teamID"></span></h1>
+                <h2 class="text-center text-xl lg:text-2xl text-blue-800 italic">"<span id="teamName"></span>"</h2>
+                <hr/>
+                <p class="text-slate-400" id="teamInfo"></p>
+                <hr/>
+                <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamRecordList">
+                    <div class="h-screen w-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>                          
+                    </div>
+                </div>
+                <button 
+                    class="z-30 fixed bottom-3 right-3 rounded-full w-14 h-14 lg:w-16 lg:h-16 text-blue-200 bg-blue-700 flex items-center justify-center text-center text-3xl"
+                    onclick="recordCreate()">
+                    <span class="mb-1 lg:mb-1">+</span>
+                </button>
+            </div>
+
+            <!-- Create Record -->
+            <div class="w-full hidden" id="recordCreateScreen">
+                <div class="shadow-lg">
+                    <div class="sm:overflow-hidden sm:rounded-md">
+                        <div class="space-y-4 bg-white px-4 py-5 sm:p-6" id="form_content">
+                            
+                        </div>
+                        <input hidden id="team_id"/>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                        <button onclick="recordSave()" type="button" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none border-indigo-500 border-2 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan Setting qrcode -->
+            <div class="w-full hidden" id="settingScreen">
+                <h1 class="text-center text-xl text-blue-800">Scan Settings QRcode</h1>
+                <div id="reader"></div>
+            </div>
+        </div>
+
+        <!--Error Mask-->
+        <div class="h-screen w-screen bg-red-500 z-40 fixed top-0 left-0 flex-col items-center justify-center hidden" id="errorMask">
+            <h1 class="text-center text-3xl text-red-200" id="error-title">Error!</h1>
+            <p class="text-center text-lg text-red-200" id="error-message">message</p>
+        </div>
+
+        <script>
+            //indexedDB.deleteDatabase('scouting');
+            const dbPromise = indexedDB.open('scouting', 3);
+            top.window.onbeforeunload = null;
+            if(tba_available()) document.getElementById("tbaAddTeamBtn").classList.replace("hidden", "inline-flex");
+
+            var last_page;
+
+            var disableHome = false;
+
+            function _uuid() {
+                var d = Date.now();
+                if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+                    d += performance.now(); //use high-precision timer if available
+                }
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = (d + Math.random() * 16) % 16 | 0;
+                    d = Math.floor(d / 16);
+                    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+            }
+
+            dbPromise.onerror = (event) => {
+                errorMessage("IndexedDB init FAILED");                                              
+            };
+
+            dbPromise.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                const recordStore = db.createObjectStore("records", { keyPath: "uuid" });
+                recordStore.createIndex("team_number", "team_number", { unique: false });
+                recordStore.createIndex("date", "date", { unique: false });
+                const teamStore = db.createObjectStore("teams", { keyPath: "number" });
+                teamStore.createIndex("number", "number", { unique: true });
+                teamStore.createIndex("name", "name", { unique: true });
+            };
+
+            dbPromise.onsuccess = (event) => {
+                showPage("teamIndexScreen");
+                if(findGetParameter("settings") != null) {
+                    var setting_json = JSON.parse(findGetParameter("settings"));
+                    if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
+                        localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
+                        localStorage.setItem("formula", setting_json.formula);
+                        if(setting_json.tba_key !== undefined) {
+                            localStorage.setItem("TBA_KEY", setting_json.tba_key);
+                        }
+                        if(confirm("setup success!")) {
+                            window.location.href = window.location.origin + window.location.pathname;
+                        }
+                    } else {
+                        alert("format error");
+                    }
+                } else if(localStorage.getItem("formula") === null || localStorage.getItem("parameters") === null) {
+                    disableHome = true;
+                    scanSettingQRcode();
+                }
+            }
+
+            function updateSetting() {
+                var input = prompt("Paste Setting JSON:");
+                if(input == null || input == "") return;
+                var setting_json = JSON.parse(input);
+                if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
+                    localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
+                    localStorage.setItem("formula", setting_json.formula);
+                    if(setting_json.tba_key !== undefined) {
+                        localStorage.setItem("TBA_KEY", setting_json.tba_key);
+                    }
+                    if(confirm("setup success!")) {
+                        window.location.href = window.location.origin + window.location.pathname;
+                    }
+                } else {
+                    alert("format error");
+                }
+            }
+
+            function findGetParameter(parameterName) {
+                var result = null,
+                    tmp = [];
+                location.search
+                    .substr(1)
+                    .split("&")
+                    .forEach(function (item) {
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                    });
+                return result;
+            }
+
+            function deleteRecord(uuid) {
+                if(confirm(`[comfire]\nDELETE\n'${uuid}'?`)) {
+                    var req = dbPromise.result.transaction(['records'], 'readwrite').objectStore('records');
+                    req.delete(uuid).onsuccess = (event) => {
+                        alert("record deleted");
+                        window.location.reload();
+                    };
+                }
+            }
+
+            function errorMessage(message) {
+                document.getElementById("errorMask").classList.replace("hidden", "flex");
+                document.getElementById("error-message").innerText = message;
+            }
+
+            function scanSettingQRcode() {
+                showPage("settingScreen");
+
+                // Setting up Qr Scanner properties
+                var html5QrCodeScanner = new Html5QrcodeScanner("reader", {
+                    fps: 15,
+                    qrbox: 350
+                });
+
+                function onScanSuccess(qrCodeMessage) {
+                    var setting_json = JSON.parse(qrCodeMessage);
+                    if(setting_json.parameters !== undefined) {
+                        if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
+                            localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
+                            localStorage.setItem("formula", setting_json.formula);
+                            if(setting_json.tba_key !== undefined) {
+                                localStorage.setItem("TBA_KEY", setting_json.tba_key);
+                            }
+                            if(confirm("setup success!")) {
+                                window.location.reload();
+                            }
+                        } else {
+                            alert("format error");
+                        }
+                    } else {
+                        alert("format error: no parameters");
+                    }
+                }
+
+                // When scan is unsuccessful fucntion will produce error message
+                function onScanError(errorMessage) {
+                // Handle Scan Error
+                }
+
+                // in
+                html5QrCodeScanner.render(onScanSuccess, onScanError);
+            }
+
+            function showPage(name) {
+                if(disableHome && name == "teamIndexScreen") return;
+                if(last_page != name) document.getElementById(name).classList.replace("hidden", "box");
+                if(last_page != null && last_page != name) document.getElementById(last_page).classList.replace("box", "hidden");
+                last_page = name;
+                if(name == "teamIndexScreen") getTeamIndex();
+            }
+
+            function showTeam(number) {
+                document.getElementById("teamRecordList").innerHTML = '';
+
+                showPage("teamViewScreen");
+                var transaction = dbPromise.result.transaction(['teams', 'records'], 'readonly');
+                var req = transaction.objectStore('teams').get(number);
+                req.onsuccess = function(event) {
+                    document.getElementById("teamID").innerText = event.target.result.number;
+                    document.getElementById("teamName").innerText = event.target.result.nickname != null ? event.target.result.nickname : event.target.result.name;
+                    var infoContainer = document.getElementById("teamInfo");
+                    infoContainer.innerHTML = '<ul class="px-5">';
+
+                    Object.keys(event.target.result).forEach((key) => {
+                        if(key == "number" || key == "name") return;
+                        infoContainer.innerHTML += '<li>' + key + ': ' + (key == "website" ? '<a href="' + event.target.result[key] + '">' + event.target.result[key] + '</a>' : event.target.result[key] ) + '</li>'
+                    });
+                    infoContainer.innerHTML += '</ul>';
+                };
+                var records_req = transaction.objectStore('records').index("team_number").getAll(number);
+                records_req.onsuccess = function(event) {
+                    if(event.target.result.length < 1) {
+                        document.getElementById("teamRecordList").innerHTML = '<div class="h-48 w-full flex flex-col items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg><p class="text-xl font-bold text-center">No Data</p></div>';
+                    }
+                    event.target.result.forEach((record) => {
+                        var get_req = dbPromise.result.transaction('records', 'readwrite').objectStore('records').get(record.uuid);
+                        get_req.onsuccess = (event) => {
+                            var htmlCode = '<div class="bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative" >' + 
+                                '<button class="w-5 h-5 absolute top-2 right-2" onclick="deleteRecord(\'' + record.uuid + '\')">' +
+                                    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">' + 
+                                        '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />' +
+                                    '</svg>' +
+                                '</button><div><h1 class="text-lg flex items-center space-x-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg><span>' + record.uuid + '</span></h1><h2 class="text-sm flex items-center space-x-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>' + moment(new Date(record.date)).format('YYYY/MM/DD, HH:mm:ss') + '</span></h2></div><div class="prose w-full"><ul>';
+                            Object.keys(event.target.result.parameters).forEach((key) => {
+                                htmlCode += '<li class="text-blue-800 space-x-1">' + key + ':<span class="font-bold">' + event.target.result.parameters[key] + '</span></li>';
+                            });
+                            document.getElementById("teamRecordList").innerHTML += htmlCode + '</ul></div></div>';
+                        };
+                    });
+                };
+                document.getElementById("team_id").value = number;
+            }
+
+            function getTeamIndex() {
+                var req = dbPromise.result.transaction('teams', 'readonly').objectStore('teams').getAll();
+                const teamIndex = document.getElementById("team-index");
+                req.onsuccess = (event) => {
+                    var teams = event.target.result;
+
+                    if(teams.length != 0) {
+                        teamIndex.innerHTML = '';
+                        teams.forEach((team) => {
+                            var records_req = dbPromise.result.transaction('records', 'readonly').objectStore('records').index("team_number").getAll(team.number);
+                            records_req.onsuccess = function(event) {
+                                var rate = 0;
+                                event.target.result.forEach((record) => {
+                                    rate += getRate(record.parameters);
+                                });
+                                teamIndex.innerHTML += '<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam(\''+ team.number +'\')">' +
+                                '<div><h1 class="text-xl xl:text-2xl">Team #' + team.number +'</h1><h2 class="xl:text-lg">'+ (team.nickname != null ? team.nickname : team.name) +'</h2></div>'+
+                                '<div class="flex items-center justify-between space-x-2"><div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">' +
+                                '<h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg><span>Rate:</span></h3>'+
+                                '<p class="text-4xl font-bold text-center">'+ Math.round(rate/event.target.result.length*100)/100 +'</p></div>'+
+                                '<div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4"><h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg><span>Records:</span></h3>'+
+                                '<p class="text-4xl font-bold text-center">' + event.target.result.length + '</p></div></div></div>';
+                            }
+                        });
+                    } else {
+                        teamIndex.innerHTML = '<div class="h-48 w-full flex flex-col items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg><p class="text-xl font-bold text-center">No Data</p></div>';
+                    }
+                };
+            }
+
+            function addTeam(t_number  = null, t_name = null , skip = false) {
+                var team_number, team_name;
+                if(t_number == null) {
+                    team_number = prompt("team number");
+                    while(team_number == "") {
+                        team_number = prompt("team number");
+                    }
+                    if(team_number !== null) {
+                        team_name = prompt("team name");
+                        while(team_name == "") {
+                            team_name = prompt("team name");
+                        }
+                        if(team_name == null) {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                } else {
+                    team_number = t_number;
+                    team_name = t_name;
+                }
+
+                var allow = true;
+                if(!skip) {
+                    allow = confirm("[confirm team info]\nteam number: " + team_number + "\nteam name: " + team_name);
+                }
+                
+                if(allow) {
+                    var req = dbPromise.result.transaction('teams', 'readwrite').objectStore('teams')
+                                .add({
+                                    "number": team_number, 
+                                    "name": team_name,
+                                    "school_name": "",
+                                    "rookie_year": "",
+                                    "website": "",
+                                    "nickname": "",
+                                    "country": "",
+                                    "gmaps_place_id": ""
+                                });
+                    req.onsuccess = function (event) {
+                        if(!skip) {
+                            getTeamIndex();
+                        }
+
+                        try {
+                            teamInfoGet(team_number, skip);
+                        } catch(e) {
+                            alert("Failed to fetch data from TBA");
+                        }
+                    };
+                    req.onerror = function (error) {
+                        alert("FAILED to add team");
+                    }
+                } else {
+                    return;
+                }
+            }
+
+            const flatten = (data) => {
+                const result = {};
+                const isEmpty = (x) => Object.keys(x).length === 0;
+                const recurse = (cur, prop) => {
+                    if (Object(cur) !== cur) {
+                        result[prop] = cur;
+                    } else if (Array.isArray(cur)) {
+                        const length = cur.length;
+                        for (let i = 0; i < length; i++) {
+                            recurse(cur[i], `${prop}[${i}]`);
+                        }
+                        if (length === 0) {
+                            result[prop] = [];
+                        }
+                    } else {
+                        if (!isEmpty(cur)) {
+                            Object.keys(cur).forEach((key) =>
+                                recurse(cur[key], prop ? `${key}` : key)
+                            );
+                        } else {
+                            result[prop] = {};
+                        }
+                    }
+                };
+                recurse(data, "");
+                return result;
+            };
+
+            function exportAll() {
+                var req = dbPromise.result.transaction('records', 'readonly').objectStore('records').getAll();
+
+                req.onsuccess = (event) => {
+                    var new_json = [];
+                    Object.keys(event.target.result).forEach((key) => {
+                        new_json.push(flatten(event.target.result[key]));
+                    });
+                    var ws = XLSX.utils.json_to_sheet(new_json);
+                    var wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "records");
+                    XLSX.writeFile(wb, 'scouting-export.xlsx');
+                };
+            }
+
+            function getRate(data) {
+                console.log("data");
+                console.log(data);
+                var formula = localStorage.getItem("formula");
+                var parameters = JSON.parse(localStorage.getItem("parameters"));
+                parameters.forEach((parameter) => {
+                    formula = formula.replace(parameter.alias, data[parameter.alias]);
+                });
+                return eval(formula);
+            }
+
+            function recordCreate(number = null) {
+                if(number != null) document.getElementById("team_id").value = number;
+                showPage("recordCreateScreen");
+                document.getElementById("form_content").innerHTML = '';
+                var parameters = JSON.parse(localStorage.getItem("parameters"));
+                parameters.forEach((parameter) => {
+                    if(parameter.type == "textarea") {
+                        document.getElementById("form_content").innerHTML += '<div><label for="' + parameter.alias + '" class="block text-sm font-medium text-gray-700">' + parameter.name + '</label>' +
+                                '<div class="mt-1"><textarea id="' + parameter.alias + '" name="' + parameter.alias + '" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="' + parameter.name + '"></textarea>'+
+                                '</div></div>';
+                    } else {
+                        document.getElementById("form_content").innerHTML += '<div>' +
+                                '<label for="' + parameter.alias + '" class="block text-sm font-medium text-gray-700">' + parameter.name + '</label>'+
+                                '<div class="mt-1"><input id="' + parameter.alias + '" name="' + parameter.alias + '" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="' + (parameter.type == "number" ? 0 : '') + '" placeholder="' + parameter.name + '" type="'+ parameter.type +'"/>'
+                                '</div></div>';
+                    }
+                });
+            }
+
+            function recordSave() {
+                var parameters = JSON.parse(localStorage.getItem("parameters"));
+                var json_obj = {
+                    "uuid":_uuid(), 
+                    "team_number": document.getElementById("team_id").value,
+                    "parameters":{},
+                    "date": Date.now()
+                };
+                parameters.forEach((parameter) => {
+                    if(parameter.type == "number") {
+                        json_obj['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
+                    } else {
+                        json_obj['parameters'][parameter.alias] = document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
+                    }
+                });
+                
+                var add_req = dbPromise.result.transaction('records', 'readwrite').objectStore('records').add(json_obj);
+                add_req.onsuccess = function (event) {
+                    alert("saved");
+                    showTeam(document.getElementById("team_id").value);
+                };
+                
+            }
+
+            function addTeamFromTBA(eve = null) {
+                if(!tba_available()) return;
+                var eve;
+
+                
+                axios.get("https://www.thebluealliance.com/api/v3/team/frc7589/events/keys", {
+                    headers: {
+                        "accept": "application/json",
+                        "X-TBA-Auth-Key": TBA_KEY
+                    }
+                }).then(res => {
+                    if(res.status == 200) {
+                        var keys = "";
+                        res.data.forEach((key) => {
+                            keys += " * " + key + "\n";
+                        });
+                        if(eve == null) event = prompt("Events:\n" + keys + "----------\nEnter Key:");
+                        else event = eve;
+
+                        axios.get("https://www.thebluealliance.com/api/v3/event/" + event + "/teams/keys", {
+                            headers: {
+                                "accept": "application/json",
+                                "X-TBA-Auth-Key": TBA_KEY
+                            }
+                        }).then(res => {
+                            if(res.status == 200) {
+                                res.data.forEach((team) => {
+                                    try {
+                                        addTeam(team.replace("frc", ""), "AutoAddTBA" + team, true);
+                                    } catch (e) {
+                                        alert("failed to add #" + team);
+                                    }
+                                });
+                                getTeamIndex();
+                            }
+                        });
+                    }
+                });
+            }
+
+            function teamInfoGet(number, skip = false) {
+                if(!tba_available()) return;
+                // fetch from TBA
+                axios.get("https://www.thebluealliance.com/api/v3/team/frc" + number, {
+                    headers: {
+                        "accept": "application/json",
+                        "X-TBA-Auth-Key": TBA_KEY
+                    }
+                }).then(res => {
+                    if(res.status == 200) {
+                        var objectStore = dbPromise.result.transaction(["teams"], 'readwrite').objectStore("teams");
+                        objectStore.get(number).onsuccess = (event) => {
+                            const team = event.target.result;
+                            team['school_name'] = res.data['school_name'];
+                            team['rookie_year'] = res.data['rookie_year'];
+                            team['website'] = res.data['website'];
+                            team['nickname'] = res.data['nickname'];
+                            team['country'] = res.data['country'];
+                            team['gmaps_place_id'] = res.data['gmaps_place_id'];
+
+                            const updateRequest = objectStore.put(team);
+                            updateRequest.onsuccess = () => {
+                                if(!skip) {
+                                    alert("Team info successfully fetched from TBA");
+                                    getTeamIndex();
+                                } else {
+                                    console.log("Team info successfully fetched from TBA");
+                                }
+                            };
+                        }
+                    }
+                });
+            }
+        
+            function quickRecord() {
+                var teamID = prompt('Team ID:');
+                if(teamID != null && teamID != "") {
+                    recordCreate(teamID);
+                }
+            }
+        </script>
+    </body>
+</html>
