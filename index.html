@@ -235,8 +235,8 @@
 
             function showPage(name) {
                 if(disableHome && name == "teamIndexScreen") return;
-                if(last_page != name) document.getElementById(name).classList.replace("hidden", "box");
-                if(last_page != null && last_page != name) document.getElementById(last_page).classList.replace("box", "hidden");
+                if(last_page != name) document.getElementById(name).classList.replace("hidden", "show");
+                if(last_page != null && last_page != name) document.getElementById(last_page).classList.replace("show", "hidden");
                 last_page = name;
                 if(name == "teamIndexScreen") getTeamIndex();
             }
