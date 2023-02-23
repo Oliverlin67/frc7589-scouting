@@ -183,9 +183,7 @@
                     console.error("Error adding document: ", error);
                 });
             }
-        </script>
 
-        <script>
             //indexedDB.deleteDatabase('scouting');
             const dbPromise = indexedDB.open('scouting', 3);
             top.window.onbeforeunload = null;
