@@ -20,6 +20,23 @@ self.addEventListener("install", (e) => {
     );
 });
 
+self.addEventListener("activate", (event) => {
+    console.log("ready to handle fetches!");
+
+    e.waitUntil(
+        caches.keys().then((keyList) => {
+            Promise.all(
+                keyList.map((key) => {
+                    if (key === cacheName) {
+                        return;
+                    }
+                    caches.delete(key);
+                })
+            );
+        })
+    );
+});
+
 self.addEventListener("fetch", (e) => {
     e.respondWith(
         (async () => {

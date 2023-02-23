@@ -16,12 +16,12 @@
                 return typeof TBA_KEY !== null;
             }
 
-            if("serivceWorker" in navigator) {
-                console.log('Fegistering service worker');
+            if('serviceWorker' in navigator) {
+                console.log('Registering service worker');
                 try {
-                    navigator.serviceWorker.register("service-worker.js");
+                    navigator.serviceWorker.register("./service-worker.js");
                 } catch(e) {
-                    console.warn('Failed to register service worker');
+                    console.warn('Failed to register service worker, err:' + e);
                 }
             }
         </script>
