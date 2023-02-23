@@ -173,7 +173,15 @@
             dbPromise.onsuccess = (event) => {
                 showPage("teamIndexScreen");
                 if(findGetParameter("settings") != null) {
-                    var setting_json = JSON.parse(findGetParameter("settings"));
+                    storeSetting(findGetParameter("settings"));
+                } else if(localStorage.getItem("formula") === null || localStorage.getItem("parameters") === null) {
+                    updateSetting();
+                }
+            }
+
+            function storeSetting(input) {
+                try {
+                    var setting_json = JSON.parse(input);
                     if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
                         localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
                         localStorage.setItem("formula", setting_json.formula);
@@ -186,10 +194,12 @@
                     } else {
                         alert("format error");
                     }
-                } else if(localStorage.getItem("formula") === null || localStorage.getItem("parameters") === null) {
-                    updateSetting();
+                } catch(e) {
+                    alert("format error");
                 }
+                
             }
+
 
             function findGetParameter(parameterName) {
                 var result = null,
@@ -222,19 +232,7 @@
             function updateSetting() {
                 var input = prompt("paste setting json");
                 if(input == null || input == "") return;
-                var setting_json = JSON.parse(input);
-                if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
-                    localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
-                    localStorage.setItem("formula", setting_json.formula);
-                    if(setting_json.tba_key !== undefined) {
-                        localStorage.setItem("TBA_KEY", setting_json.tba_key);
-                    }
-                    if(confirm("setup success!")) {
-                        window.location.href = window.location.origin + window.location.pathname;
-                    }
-                } else {
-                    alert("format error");
-                }
+                storeSetting(input);
             }
 
             function showPage(name) {
