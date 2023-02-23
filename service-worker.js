@@ -4,8 +4,6 @@ const contentToCache = [
     "./app.css",
     "./index.html",
     "./moment.min.js",
-    './html5-qrcode.min.js',
-    "./qrcode.js",
     "./xlsx.full.min.js",
     "./icon-192x192.png",
 ];
