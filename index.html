@@ -5,9 +5,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./app.css" rel="stylesheet">
+        <link href="./manifest.json" rel="manifest">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="./moment.min.js" type="text/javascript"></script>
         <script src="./xlsx.full.min.js" type="text/javascript"></script> 
+        
         
         <script>
             const TBA_KEY = localStorage.getItem("TBA_KEY");
@@ -140,7 +142,15 @@
             top.window.onbeforeunload = null;
             if(tba_available()) document.getElementById("tbaAddTeamBtn").classList.replace("hidden", "inline-flex");
 
-            var last_page;
+            var last_page, online;
+
+            if('onLine' in navigator) {
+                online = navigator.onLine;
+            }
+
+            function isOnline() {
+                return isOnline;
+            }
 
             function _uuid() {
                 var d = Date.now();
@@ -154,7 +164,7 @@
                 });
             }
 
-            window.addEventListener('offline', () => console.log('offline'));
+            window.addEventListener('offline', () => { online = false });
 
             dbPromise.onerror = (event) => {
                 errorMessage("IndexedDB init FAILED");                                              
@@ -471,6 +481,7 @@
             }
 
             function addTeamFromTBA(eve = null) {
+                if(!isOnline) return;
                 if(!tba_available()) return;
                 var eve;
 
@@ -513,6 +524,7 @@
             }
 
             function teamInfoGet(number, skip = false) {
+                if(!isOnline) return;
                 if(!tba_available()) return;
                 // fetch from TBA
                 axios.get("https://www.thebluealliance.com/api/v3/team/frc" + number, {
