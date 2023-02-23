@@ -136,6 +136,57 @@
             <p class="text-center text-lg text-red-200" id="error-message">message</p>
         </div>
 
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
+            import { getFirestore } from 'https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js';
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+              apiKey: "AIzaSyCQ5cg4VRFiVxeT6JQPKI1vd3kB938w_g0",
+              authDomain: "frc-7589.firebaseapp.com",
+              projectId: "frc-7589",
+              storageBucket: "frc-7589.appspot.com",
+              messagingSenderId: "283240547457",
+              appId: "1:283240547457:web:ce55f744bc4b4d46653980",
+              measurementId: "G-2EB11FYT18"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+            const db = getFirestore(app);
+        </script>
+
+        <script>
+            function firebaseStoreRecord(data, skip = false) {
+                db.collection("records").doc(data.uuid).add(data)
+                .then((docRef) => {
+                    const objectStore = dbPromise.result.transaction(["records"], 'readwrite').objectStore("records");
+                    objectStore.get(data.uuid).onsuccess = (event) => {
+                        const record = event.target.result;
+                        record['uploaded'] = true;
+                        const updateRequest = objectStore.put(record);
+                        updateRequest.onsuccess = () => {
+                            if(!skip) {
+                                alert("record uploaded to server");
+                            } else {
+                                console.log("record uploaded to server");
+                            }
+                        };
+                    };
+                    console.log("Document written with ID: ", docRef.id);
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                });
+            }
+        </script>
+
         <script>
             //indexedDB.deleteDatabase('scouting');
             const dbPromise = indexedDB.open('scouting', 3);
@@ -161,6 +212,9 @@
             }
 
             window.addEventListener('offline', () => { online = false });
+            window.addEventListener('online', () => {
+                dataUpload();
+            });
 
             dbPromise.onerror = (event) => {
                 errorMessage("IndexedDB init FAILED");                                              
@@ -174,6 +228,7 @@
                 const teamStore = db.createObjectStore("teams", { keyPath: "number" });
                 teamStore.createIndex("number", "number", { unique: true });
                 teamStore.createIndex("name", "name", { unique: true });
+                teamStore.createIndex("uploaded", "uploaded", { unique: false });
             };
 
             dbPromise.onsuccess = (event) => {
@@ -183,6 +238,21 @@
                 } else if(localStorage.getItem("formula") === null || localStorage.getItem("parameters") === null) {
                     updateSetting();
                 }
+            }
+
+            function dataUpload() {
+                const objectStore = dbPromise.result.transaction(['records'], 'readonly').objectStore("records");
+                objectStore.index('uploaded').getAll(false).onsuccess = function (event) {
+                    const records = event.target.result;
+                    if(records.length == 0) {
+                        console.log('nothing to upload');
+                        return;
+                    }
+                    records.forEach((record) => {
+                        firebaseStoreRecord(record, true);
+                    });
+                    console.log('all uploaded');
+                };
             }
 
             function storeSetting(input) {
@@ -205,7 +275,6 @@
                 }
                 
             }
-
 
             function findGetParameter(parameterName) {
                 var result = null,
@@ -458,7 +527,8 @@
                     "uuid":_uuid(), 
                     "team_number": document.getElementById("team_id").value,
                     "parameters":{},
-                    "date": Date.now()
+                    "date": Date.now(),
+                    "uploaded": false
                 };
                 parameters.forEach((parameter) => {
                     if(parameter.type == "number") {
@@ -471,9 +541,11 @@
                 var add_req = dbPromise.result.transaction('records', 'readwrite').objectStore('records').add(json_obj);
                 add_req.onsuccess = function (event) {
                     alert("saved");
+                    if(online) {
+                        firebaseStoreRecord(json_obj);
+                    }
                     showTeam(document.getElementById("team_id").value);
                 };
-                
             }
 
             function addTeamFromTBA(eve = null) {
