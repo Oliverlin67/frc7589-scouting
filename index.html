@@ -154,6 +154,8 @@
                 });
             }
 
+            window.addEventListener('offline', () => console.log('offline'));
+
             dbPromise.onerror = (event) => {
                 errorMessage("IndexedDB init FAILED");                                              
             };
@@ -250,7 +252,7 @@
                 var req = transaction.objectStore('teams').get(number);
                 req.onsuccess = function(event) {
                     document.getElementById("teamID").innerText = event.target.result.number;
-                    document.getElementById("teamName").innerText = event.target.result.nickname != null ? event.target.result.nickname : event.target.result.name;
+                    document.getElementById("teamName").innerText = event.target.result.nickname != "" ? event.target.result.nickname : event.target.result.name;
                     var infoContainer = document.getElementById("teamInfo");
                     infoContainer.innerHTML = '<ul class="px-5">';
 
@@ -505,6 +507,8 @@
                                 });
                                 getTeamIndex();
                             }
+                        }).catch(error => {
+                            console.log(error.toJSON());
                         });
                     }
                 });
@@ -541,6 +545,8 @@
                             };
                         }
                     }
+                }).catch(error => {
+                    console.log(error.toJSON());
                 });
             }
         
