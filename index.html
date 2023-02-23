@@ -158,7 +158,7 @@
             firebaseDB = firebase.firestore();
 
             function firebaseStoreRecord(data, skip = false) {
-                firebaseDB.collection("records").doc(data.uuid).add(data)
+                firebaseDB.collection("records").doc(data.uuid).set(data)
                 .then((docRef) => {
                     const objectStore = dbPromise.result.transaction(["records"], 'readwrite').objectStore("records");
                     objectStore.get(data.uuid).onsuccess = (event) => {
