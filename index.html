@@ -481,7 +481,10 @@
             }
 
             function addTeamFromTBA(eve = null) {
-                if(!isOnline) return;
+                if(!isOnline) {
+                    alert("This fucnction required network connection!");
+                    return;
+                }
                 if(!tba_available()) return;
                 var eve;
 
@@ -524,7 +527,10 @@
             }
 
             function teamInfoGet(number, skip = false) {
-                if(!isOnline) return;
+                if(!isOnline) {
+                    alert("This fucnction required network connection!");
+                    return;
+                }
                 if(!tba_available()) return;
                 // fetch from TBA
                 axios.get("https://www.thebluealliance.com/api/v3/team/frc" + number, {
