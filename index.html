@@ -210,7 +210,9 @@
             }
 
             function updateSetting() {
-                var setting_json = JSON.parse(findGetParameter("settings"));
+                var input = prompt("paste setting json");
+                if(input == null || input == "") return;
+                var setting_json = JSON.parse(input);
                 if(typeof setting_json.parameters !== "string" && setting_json.formula !== undefined) {
                     localStorage.setItem("parameters", JSON.stringify(setting_json.parameters));
                     localStorage.setItem("formula", setting_json.formula);
