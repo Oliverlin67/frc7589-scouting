@@ -9,6 +9,9 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="./moment.min.js" type="text/javascript"></script>
         <script src="./xlsx.full.min.js" type="text/javascript"></script> 
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
         
         
         <script>
@@ -136,12 +139,7 @@
             <p class="text-center text-lg text-red-200" id="error-message">message</p>
         </div>
 
-        <script type="module">
-            // Import the functions you need from the SDKs you need
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-            import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
-            import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
-            // TODO: Add SDKs for Firebase products that you want to use
+        <script>
             // https://firebase.google.com/docs/web/setup#available-libraries
           
             // Your web app's Firebase configuration
@@ -156,13 +154,11 @@
               measurementId: "G-2EB11FYT18"
             };
           
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app);
-            const db = getFirestore(app);
+            firebase.initializeApp(firebaseConfig);
+            firebaseDB = firebase.firestore();
 
             function firebaseStoreRecord(data, skip = false) {
-                db.collection("records").doc(data.uuid).add(data)
+                firebaseDB.collection("records").doc(data.uuid).add(data)
                 .then((docRef) => {
                     const objectStore = dbPromise.result.transaction(["records"], 'readwrite').objectStore("records");
                     objectStore.get(data.uuid).onsuccess = (event) => {
