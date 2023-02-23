@@ -148,10 +148,6 @@
                 online = navigator.onLine;
             }
 
-            function isOnline() {
-                return isOnline;
-            }
-
             function _uuid() {
                 var d = Date.now();
                 if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
@@ -481,7 +477,7 @@
             }
 
             function addTeamFromTBA(eve = null) {
-                if(!isOnline) {
+                if(!online) {
                     alert("This fucnction required network connection!");
                     return;
                 }
@@ -527,7 +523,7 @@
             }
 
             function teamInfoGet(number, skip = false) {
-                if(!isOnline) {
+                if(!online) {
                     alert("This fucnction required network connection!");
                     return;
                 }
