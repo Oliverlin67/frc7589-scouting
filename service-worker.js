@@ -1,11 +1,10 @@
 const cacheName = "frc7589_scouting";
 
 const contentToCache = [
-    "./app.css",
+    "./assets/app.css",
+    "./assets/app.js",
     "./index.html",
-    "./moment.min.js",
-    "./xlsx.full.min.js",
-    "./icon-192x192.png",
+    "./icons/icon-192x192.png",
 ];
 
 self.addEventListener("install", (e) => {
