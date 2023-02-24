@@ -24,7 +24,7 @@
         <!--Top Bar-->
         <div class="fixed top-0 left-0 w-full h-14 md:h-16 bg-blue-600 z-30 py-1.5 px-3 sm:px-3.5">
             <div class="max-w-4xl mx-auto h-full flex items-center justify-between">
-                <div class="relative pb-3.5 pr-1" onclick="showPage('teamIndexScreen')">
+                <div class="relative pb-3.5 pr-1" onclick="getTeamIndex()">
                     <h1 class="md:text-2xl text-xl text-blue-50">FRC #7589</h1>
                     <span class="absolute bottom-0 text-white">Scouting</span>
                 </div>
@@ -534,6 +534,10 @@
                         updateEleHTML("teamInfo", html);
                     }
                 });
+            }
+
+            function addTeamFromTBA() {
+                Swal.fire();
             }
         </script>
     </body>
