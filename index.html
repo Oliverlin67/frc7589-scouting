@@ -319,10 +319,10 @@
                             });
                         } else {
                             var id = ckv.split(':')[0];
-                            db.collection('pushUsers').doc(id).set({'token': ckv});
+                            db.collection('pushUsers').doc(id).set({'token': messaging_token});
                         }
                     }).catch(function(err) {
-                        console.log('使用者未允許通知', err);
+                        console.log('Unable to receive message', err);
                     });
                 } catch(e) {
                     console.warn('Failed to register service worker, err:' + e);
