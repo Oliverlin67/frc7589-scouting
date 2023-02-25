@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "teams",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "info.nickname",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "info.team_number",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
