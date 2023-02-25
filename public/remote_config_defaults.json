@@ -1,0 +1,6 @@
+{
+    "tba_key": null,
+    "parameters": "[{\"name\":\"[Auto]Cube Count\",\"type\":\"number\",\"alias\":\"auto_cube\"},{\"name\":\"[Auto]Cone Count\",\"type\":\"number\",\"alias\":\"auto_cone\"},{\"name\":\"Cube Count\",\"type\":\"number\",\"alias\":\"cube\"},{\"name\":\"Cone Count\",\"type\":\"number\",\"alias\":\"cone\"},{\"name\":\"Robot Design \",\"type\":\"textarea\",\"alias\":\"robotDesign\"},{\"name\":\"Drive Base\",\"type\":\"textarea\",\"alias\":\"driveBase\"},{\"name\":\"Note\",\"type\":\"textarea\",\"alias\":\"note\"}]",
+    "formula": "((auto_cube+auto_cone*1.2)*0.7+(cone+cube)*0.3)",
+    "eventKey": "2023casd"
+}
