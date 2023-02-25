@@ -212,12 +212,13 @@
                 handleCodeInApp: true
             };  
 
-            db.settings({
+            firebase.firestore().settings({
                 cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
             });
 
-            db.enablePersistence()
+            firebase.firestore().enablePersistence()
                 .catch((err) => {
+                    alert(err.code);
                     if (err.code == 'failed-precondition') {
                         // Multiple tabs open, persistence can only be enabled
                         // in one tab at a a time.
