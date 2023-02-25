@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "npx tailwindcss -i ./src/app.css  -o ./docs/assets/app.css --watch",
-    "prod": "npx tailwindcss -i ./src/app.css  -o ./docs/assets/app.css -m",
+    "dev": "npx tailwindcss -i ./src/app.css  -o ./public/assets/app.css --watch",
+    "prod": "npx tailwindcss -i ./src/app.css  -o ./public/assets/app.css -m",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
