@@ -258,60 +258,7 @@
                 });
             }
 
-            async function userLogin() {
-                await Swal.fire({
-                    title: 'Account Login',
-                    html: `<input type="text" id="email" class="swal2-input w-7/8" placeholder="Email">
-                    <input type="password" id="password" class="swal2-input w-7/8" placeholder="Password">`,
-                    confirmButtonText: 'Login',
-                    focusConfirm: false,
-                    showLoaderOnConfirm: true,
-                    preConfirm: async () => {
-                        const email = Swal.getPopup().querySelector('#email').value;
-                        const password = Swal.getPopup().querySelector('#password').value;
-
-                        if (!email || !password) {
-                            Swal.showValidationMessage(`Please enter email and password`);
-                        }
-
-                        return await auth.signInWithEmailAndPassword(email, password)
-                            .then((userCredential) => {
-                                var user = userCredential.user;
-                                return user;
-                            })
-                            .catch((error) => {
-                                var errorCode = error.code;
-                                var errorMessage = error.message;
-                                Swal.showValidationMessage(`Wrong Email or Password`);
-                            });
-                    },
-                    showClass: {
-                        popup: `
-                        animate__animated
-                        animate__fadeInUp
-                        animate__faster
-                        `
-                    },
-                    hideClass: {
-                        popup: `
-                        animate__animated
-                        animate__fadeOutDown
-                        animate__faster
-                        `
-                    },
-                    customClass: {
-                        container: 'p-1.5',
-                        htmlContainer: 'm-0 max-w-full flex flex-col spacep-y-2',
-                        popup: 'max-w-lg'
-                    },
-                    allowOutsideClick: false
-                }).then((result) => {
-                    showMessage("Login Successful");
-                });
-
-                return true;
-            }
-
+            
             async function storeRecord(key, data) {
                 const online = await isOnline();
                 showMessage("Saving record...");
@@ -575,6 +522,115 @@
 
         <!-- Actions -->
         <script>
+
+            async function sendPassswordReset() {
+                await Swal.fire({
+                    title: 'Forgot Password',
+                    html: `<input type="text" id="email" class="swal2-input w-7/8" placeholder="Email">
+                    <button class="text-blue-700 mt-4 text-sm" onclick="userLogin()">Login?</button>`,
+                    confirmButtonText: 'Send email',
+                    focusConfirm: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: async () => {
+                        const email = Swal.getPopup().querySelector('#email').value;
+
+                        if (!email) {
+                            Swal.showValidationMessage(`Please enter your email`);
+                        }
+
+                        return await auth.sendPasswordResetEmail(email)
+                            .then(() => {
+                                return true;
+                            })
+                            .catch((error) => {
+                                var errorCode = error.code;
+                                var errorMessage = error.message;
+                                Swal.showValidationMessage(`Wrong Email`);
+                            });
+                    },
+                    showClass: {
+                        popup: `
+                        animate__animated
+                        animate__fadeInUp
+                        animate__faster
+                        `
+                    },
+                    hideClass: {
+                        popup: `
+                        animate__animated
+                        animate__fadeOutDown
+                        animate__faster
+                        `
+                    },
+                    customClass: {
+                        container: 'p-1.5',
+                        htmlContainer: 'm-0 max-w-full flex flex-col spacep-y-2',
+                        popup: 'max-w-lg'
+                    },
+                    allowOutsideClick: false
+                }).then((result) => {
+                    showMessage("Password rest email Sent!");
+                    setTimeout(() => {
+                        userLogin();
+                    }, 1500);
+                });
+            }
+
+            async function userLogin() {
+                await Swal.fire({
+                    title: 'Account Login',
+                    html: `<input type="text" id="email" class="swal2-input w-7/8" placeholder="Email">
+                    <input type="password" id="password" class="swal2-input w-7/8" placeholder="Password">
+                    <button class="text-blue-700 mt-4 text-sm" onclick="sendPassswordReset()">Forget Password?</button>`,
+                    confirmButtonText: 'Login',
+                    focusConfirm: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: async () => {
+                        const email = Swal.getPopup().querySelector('#email').value;
+                        const password = Swal.getPopup().querySelector('#password').value;
+
+                        if (!email || !password) {
+                            Swal.showValidationMessage(`Please enter email and password`);
+                        }
+
+                        return await auth.signInWithEmailAndPassword(email, password)
+                            .then((userCredential) => {
+                                var user = userCredential.user;
+                                return user;
+                            })
+                            .catch((error) => {
+                                var errorCode = error.code;
+                                var errorMessage = error.message;
+                                Swal.showValidationMessage(`Wrong Email or Password`);
+                            });
+                    },
+                    showClass: {
+                        popup: `
+                        animate__animated
+                        animate__fadeInUp
+                        animate__faster
+                        `
+                    },
+                    hideClass: {
+                        popup: `
+                        animate__animated
+                        animate__fadeOutDown
+                        animate__faster
+                        `
+                    },
+                    customClass: {
+                        container: 'p-1.5',
+                        htmlContainer: 'm-0 max-w-full flex flex-col spacep-y-2',
+                        popup: 'max-w-lg'
+                    },
+                    allowOutsideClick: false
+                }).then((result) => {
+                    showMessage("Login Successful");
+                });
+
+                return true;
+            }
+
             function getTeamIndex() {
                 copyHTML("team-index", "loadingScreen");
                 showPage("teamIndexScreen");
