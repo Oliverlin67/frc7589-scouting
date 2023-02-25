@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./assets/app.css" rel="stylesheet">
         <link href="./manifest.json" rel="manifest">
-        <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
 
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" type="text/javascript"></script>
@@ -20,7 +19,7 @@
         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-remote-config.js" type="text/javascript"></script>
         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" type="text/javascript"></script>
         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js" type="text/javascript"></script>
-        <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-performance.js" type="text/javascript"></script>
     </head>
     <body class="pb-10 bg-slate-50">
         <!--Top Bar-->
@@ -203,9 +202,15 @@
             const auth = firebase.auth();
             const messaging = firebase.messaging();
             const provider = new firebase.auth.GoogleAuthProvider();
+            const perf = firebase.performance();
             provider.setCustomParameters({
                 'hd': 'lssh.tp.edu.tw'
             });
+            
+            var actionCodeSettings = {
+                url: 'https://frc7589-scouting.coyu.cc',
+                handleCodeInApp: true
+            };  
 
             db.settings({
                 cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
@@ -235,7 +240,6 @@
 
             messaging.usePublicVapidKey('BI3uCo1Esg_eHJOfq9iQcMCWzT6AeANuzHkBf-RcG0ZgsMF6eNaFZbp205s5is9vxjay7-rMeCim--Qascb1wqg');
 
-
             messaging.onMessage((payload) => {
                 console.log('Message received. ', payload);
             });
@@ -254,19 +258,39 @@
                 });
             }
 
-            function googleLogin() {
-                auth.signInWithPopup(provider).then((result) => {
-                    var credential = result.credential;
-                    var token = credential.accessToken;
-                    var user = result.user;
-                    showMessage('Login successful!');
-                }).catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    var email = error.email;
-                    var credential = error.credential;
-                    showMessage(`FAILED to login(${error.message})`, true, 'warning');
+            async function userLogin() {
+                await Swal.fire({
+                    title: 'Account Login',
+                    html: `<input type="text" id="email" class="swal2-input" placeholder="Email">
+                    <input type="password" id="password" class="swal2-input" placeholder="Password">`,
+                    confirmButtonText: 'Login',
+                    focusConfirm: false,
+                    showLoaderOnConfirm: true,
+                    preConfirm: async () => {
+                        const email = Swal.getPopup().querySelector('#email').value;
+                        const password = Swal.getPopup().querySelector('#password').value;
+
+                        if (!email || !password) {
+                            Swal.showValidationMessage(`Please enter email and password`);
+                        }
+
+                        return await auth.signInWithEmailAndPassword(email, password)
+                            .then((userCredential) => {
+                                var user = userCredential.user;
+                                return user;
+                            })
+                            .catch((error) => {
+                                var errorCode = error.code;
+                                var errorMessage = error.message;
+                                Swal.showValidationMessage(`Wrong Email or Password`);
+                            });
+                    },
+                    allowOutsideClick: false
+                }).then((result) => {
+                    showMessage("Login Successful");
                 });
+
+                return true;
             }
 
             async function storeRecord(key, data) {
@@ -285,16 +309,26 @@
 
             async function deleteRecord(key, team_number) {
                 const online = await isOnline();
-                showMessage("Deleting record...");
-                if(!online) showTeam(team_number);
-                db.collection("records").doc(key).delete()
-                    .then(() => {
-                        showMessage("Record successfully deleted!");
-                        if(online) showTeam(team_number);
-                    })
-                    .catch((error) => {
-                        showMessage(`FAILED to delete record(${error})`, true, 'error');
-                    });
+                Swal.fire({
+                    icon: 'warning',
+                    title: `Delete Confirm`,
+                    text: `Delete Record '${key}'?`,
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true
+                }).then((result) => {
+                    if(result.isConfirmed) {
+                        showMessage("Deleting record...");
+                        if(!online) showTeam(team_number);
+                        db.collection("records").doc(key).delete()
+                            .then(() => {
+                                showMessage("Record successfully deleted!");
+                                if(online) showTeam(team_number);
+                            })
+                            .catch((error) => {
+                                showMessage(`FAILED to delete record(${error})`, true, 'error');
+                            });
+                    }
+                });
             }
 
             async function getAllRecords(number = null) {
@@ -398,15 +432,23 @@
 
         <!-- Event Listners -->
         <script>
-            window.addEventListener('load', (event) => {
+            window.addEventListener('load', async (event) => {
                 if('onLine' in navigator) {
                     changeDBMode(navigator.onLine, true);
                     if(navigator.onLine) {
                         fetchSettings(true);
                     }
                 }
-                googleLogin();
-                getTeamIndex();
+            });
+
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    getTeamIndex();
+                } else {
+                    if(await userLogin()) {
+                        getTeamIndex();
+                    }
+                }
             });
 
             window.addEventListener('offline', () => { 
