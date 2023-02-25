@@ -1,0 +1,29 @@
+[debug] [2023-02-25T16:18:20.675Z] ----------------------------------------------------------------------
+[debug] [2023-02-25T16:18:20.677Z] Command:       /opt/homebrew/Cellar/node/19.6.0/bin/node /opt/homebrew/bin/firebase deploy
+[debug] [2023-02-25T16:18:20.678Z] CLI Version:   11.24.0
+[debug] [2023-02-25T16:18:20.678Z] Platform:      darwin
+[debug] [2023-02-25T16:18:20.678Z] Node Version:  v19.6.0
+[debug] [2023-02-25T16:18:20.678Z] Time:          Sun Feb 26 2023 00:18:20 GMT+0800 (台北標準時間)
+[debug] [2023-02-25T16:18:20.678Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-25T16:18:20.715Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-25T16:18:20.716Z] > authorizing via signed-in user (thoblinoliver@gmail.com)
+[debug] [2023-02-25T16:18:20.716Z] [iam] checking project frc-7589 for permissions ["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2023-02-25T16:18:20.717Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions [none]
+[debug] [2023-02-25T16:18:20.717Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions x-goog-quota-user=projects/frc-7589
+[debug] [2023-02-25T16:18:20.717Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions {"permissions":["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2023-02-25T16:18:21.553Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions 200
+[debug] [2023-02-25T16:18:21.553Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions {"permissions":["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2023-02-25T16:18:21.554Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 [none]
+[debug] [2023-02-25T16:18:21.862Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 200
+[debug] [2023-02-25T16:18:21.863Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 {"projectId":"frc-7589","projectNumber":"283240547457","displayName":"frc-7589","name":"projects/frc-7589","resources":{"hostingSite":"frc-7589","realtimeDatabaseInstance":"frc-7589-default-rtdb","storageBucket":"frc-7589.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_18f09a2d-1713-4e66-8769-b9bef443db4a"}
+[info] 
+[info] === Deploying to 'frc-7589'...
+[info] 
+[info] i  deploying storage, firestore, hosting, remoteconfig 
+[debug] [2023-02-25T16:18:21.865Z] >>> [apiv2][query] GET https://appengine.googleapis.com/v1/apps/frc-7589 [none]
+[debug] [2023-02-25T16:18:22.211Z] <<< [apiv2][status] GET https://appengine.googleapis.com/v1/apps/frc-7589 200
+[debug] [2023-02-25T16:18:22.212Z] <<< [apiv2][body] GET https://appengine.googleapis.com/v1/apps/frc-7589 {"name":"apps/frc-7589","id":"frc-7589","authDomain":"gmail.com","locationId":"us-central","codeBucket":"staging.frc-7589.appspot.com","servingStatus":"SERVING","defaultHostname":"frc-7589.uc.r.appspot.com","defaultBucket":"frc-7589.appspot.com","serviceAccount":"frc-7589@appspot.gserviceaccount.com","gcrDomain":"us.gcr.io","databaseType":"CLOUD_FIRESTORE","featureSettings":{"splitHealthChecks":true,"useContainerOptimizedOs":true}}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2023-02-25T16:18:22.213Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [none]
+[debug] [2023-02-25T16:18:22.214Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [omitted]
