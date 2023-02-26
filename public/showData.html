@@ -54,25 +54,8 @@
 
         <!--Contents-->
         <div class="max-w-4xl mx-auto mt-14 md:mt-16">
-            <!-- Team index-->
-            <div class="w-full space-y-3 hidden p-2" id="teamIndexScreen">
-                <button 
-                    id="tbaAddTeamBtn"
-                    class="hidden inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onclick="addTeamViaTBA()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
-                    </svg>                      
-                    <span>Add Teams via Event(Powered by TBA)</span>
-                </button>
-                <button 
-                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onclick="addTeam()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>                                          
-                    <span>Add Team</span>
-                </button>
+             <!-- Team index-->
+             <div class="w-full space-y-3 hidden p-2" id="teamIndexScreen">
                 <h1 class="text-center text-2xl lg:text-4xl text-blue-800">Teams</h1>
                 <div class="flex flex-col items-center justify-center w-full space-y-3" id="team-index">
                     <div class="h-screen w-full flex items-center justify-center">
@@ -81,11 +64,6 @@
                         </svg>                          
                     </div>
                 </div>
-                <button 
-                    class="z-30 fixed bottom-3 right-3 rounded-full w-14 h-14 lg:w-16 lg:h-16 text-blue-200 bg-blue-700 flex items-center justify-center text-center text-3xl"
-                    onclick="recordCreate()">
-                    <span class="mb-1 lg:mb-1">+</span>
-                </button>
             </div>
 
             <!-- Show Team -->
@@ -95,38 +73,23 @@
                     <h3 class="text-center text-base lg:text-lg text-blue-800 italic">Rookie year: <span id="teamRookieYear"></span></h3>
                 </div>
                 <div class="space-y-2">
-                    <div class="flex space-x-1 items-center" id="teamContainer" current="teamRecordList">
-                        <button class="flex-1 py-3 border-b-2 border-blue-500 text-blue-800 tab-button" page="teamRecordList">
-                            Records
+                    <div class="flex space-x-1 items-center" id="teamContainer" current="teamRecordTable">
+                        <button class="flex-1 py-3 border-b-2 border-blue-500 text-blue-800 tab-button" page="teamRecordTable">
+                            Table
+                        </button>
+                        <button class="flex-1 py-3 border-b-2 border-blue-500 text-blue-800 tab-button" page="teamCharts">
+                            Charts
                         </button>
                         <button class="flex-1 py-3 border-b-0 border-blue-500 text-blue-800 tab-button" page="teamInfo">
                             Info
                         </button>
                     </div>
                     <div class="px-4">
-                        <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamRecordList"></div>
-                        <div class="text-slate-600 hidden prose" id="teamInfo"></div>
-                    </div>
-                </div>
-                <button 
-                    id="recordCreateBtn"
-                    class="z-30 fixed bottom-3 right-3 rounded-full w-14 h-14 lg:w-16 lg:h-16 text-blue-200 bg-blue-700 flex items-center justify-center text-center text-3xl"
-                    onclick="recordCreate()">
-                    <span class="mb-1 lg:mb-1">+</span>
-                </button>
-            </div>
-
-            <!-- Create Record -->
-            <div class="w-full p-2 pt-5 lg:p-5 hidden" id="recordCreateScreen">
-                <div class="shadow-lg bg-white rounded-md md:rounded-lg">
-                    <div class="sm:overflow-hidden">
-                        <div class="space-y-4 px-4 py-5 sm:p-6" id="form_content">
-                            
+                        <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamRecordTable"></div>
+                        <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamCharts">
+                            <canvas id="chart"></canvas>
                         </div>
-                        <input hidden id="team_id"/>
-                    </div>
-                    <div class="bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <button onclick="recordSave()" type="button" class="inline-flex justify-center rounded-md border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none border-indigo-500 border-2 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+                        <div class="text-slate-600 hidden prose" id="teamInfo"></div>
                     </div>
                 </div>
             </div>
@@ -140,6 +103,6 @@
 
 
         <!-- JavaScript -->
-        <script src="./js/app.js"></script>
+        <script src="./js/showData.js"></script>
     </body>
 </html>

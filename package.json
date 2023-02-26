@@ -22,6 +22,7 @@
   "dependencies": {
     "animate.css": "^4.1.1",
     "axios": "^0.25",
+    "chart.js": "^4.2.1",
     "firebase": "^9.17.1",
     "sweetalert2": "^11.7.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.2/xlsx-0.19.2.tgz"

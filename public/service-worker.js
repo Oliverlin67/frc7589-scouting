@@ -3,6 +3,7 @@ const cacheName = "frc7589_scouting";
 const contentToCache = [
     "./assets/app.css",
     "./index.html",
+    "./showData.html",
     "./icons/icon-192x192.png",
 ];
 

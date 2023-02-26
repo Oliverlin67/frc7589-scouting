@@ -35059,11 +35059,11 @@ function signIn(_x, _x2) {
   return _signIn.apply(this, arguments);
 }
 function _signIn() {
-  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(email, password) {
-    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
+  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(email, password) {
+    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
         case 0:
-          _context14.next = 2;
+          _context15.next = 2;
           return (0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.signInWithEmailAndPassword)(auth, email, password).then(function (user) {
             return true;
           })["catch"](function (err) {
@@ -35071,12 +35071,12 @@ function _signIn() {
             var errorMessage = err.message;
           });
         case 2:
-          return _context14.abrupt("return", _context14.sent);
+          return _context15.abrupt("return", _context15.sent);
         case 3:
         case "end":
-          return _context14.stop();
+          return _context15.stop();
       }
-    }, _callee14);
+    }, _callee15);
   }));
   return _signIn.apply(this, arguments);
 }
@@ -35084,13 +35084,13 @@ function changeDBMode(_x3) {
   return _changeDBMode.apply(this, arguments);
 }
 function _changeDBMode() {
-  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(online) {
+  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(online) {
     var silent,
-      _args15 = arguments;
-    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
+      _args16 = arguments;
+    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+      while (1) switch (_context16.prev = _context16.next) {
         case 0:
-          silent = _args15.length > 1 && _args15[1] !== undefined ? _args15[1] : false;
+          silent = _args16.length > 1 && _args16[1] !== undefined ? _args16[1] : false;
           if (online) {
             (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.enableNetwork)(db).then(function () {
               if (!silent) showMessage("mode: ONLINE");
@@ -35102,9 +35102,9 @@ function _changeDBMode() {
           }
         case 2:
         case "end":
-          return _context15.stop();
+          return _context16.stop();
       }
-    }, _callee15);
+    }, _callee16);
   }));
   return _changeDBMode.apply(this, arguments);
 }
@@ -35112,32 +35112,32 @@ function getAllRecords() {
   return _getAllRecords.apply(this, arguments);
 }
 function _getAllRecords() {
-  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
+  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
     var number,
-      _args16 = arguments;
-    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-      while (1) switch (_context16.prev = _context16.next) {
+      _args17 = arguments;
+    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+      while (1) switch (_context17.prev = _context17.next) {
         case 0:
-          number = _args16.length > 0 && _args16[0] !== undefined ? _args16[0] : null;
+          number = _args17.length > 0 && _args17[0] !== undefined ? _args17[0] : null;
           showMessage("Fetching records...");
           if (!(number != null)) {
-            _context16.next = 8;
+            _context17.next = 8;
             break;
           }
-          _context16.next = 5;
+          _context17.next = 5;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"), (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.where)("team_number", "==", number)));
         case 5:
-          return _context16.abrupt("return", _context16.sent);
+          return _context17.abrupt("return", _context17.sent);
         case 8:
-          _context16.next = 10;
+          _context17.next = 10;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"));
         case 10:
-          return _context16.abrupt("return", _context16.sent);
+          return _context17.abrupt("return", _context17.sent);
         case 11:
         case "end":
-          return _context16.stop();
+          return _context17.stop();
       }
-    }, _callee16);
+    }, _callee17);
   }));
   return _getAllRecords.apply(this, arguments);
 }
@@ -35145,43 +35145,43 @@ function getTeams() {
   return _getTeams.apply(this, arguments);
 }
 function _getTeams() {
-  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
+  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
     var number,
       docSnap,
-      _args17 = arguments;
-    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-      while (1) switch (_context17.prev = _context17.next) {
+      _args18 = arguments;
+    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+      while (1) switch (_context18.prev = _context18.next) {
         case 0:
-          number = _args17.length > 0 && _args17[0] !== undefined ? _args17[0] : null;
+          number = _args18.length > 0 && _args18[0] !== undefined ? _args18[0] : null;
           showMessage("Fetching teams...");
           if (!(number != null)) {
-            _context17.next = 13;
+            _context18.next = 13;
             break;
           }
-          _context17.next = 5;
+          _context18.next = 5;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", number));
         case 5:
-          docSnap = _context17.sent;
+          docSnap = _context18.sent;
           if (!docSnap.exists()) {
-            _context17.next = 10;
+            _context18.next = 10;
             break;
           }
-          return _context17.abrupt("return", docSnap);
+          return _context18.abrupt("return", docSnap);
         case 10:
           showMessage("Team no found");
         case 11:
-          _context17.next = 16;
+          _context18.next = 16;
           break;
         case 13:
-          _context17.next = 15;
+          _context18.next = 15;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "teams"));
         case 15:
-          return _context17.abrupt("return", _context17.sent);
+          return _context18.abrupt("return", _context18.sent);
         case 16:
         case "end":
-          return _context17.stop();
+          return _context18.stop();
       }
-    }, _callee17);
+    }, _callee18);
   }));
   return _getTeams.apply(this, arguments);
 }
@@ -35189,37 +35189,7 @@ function storeTeam(_x4, _x5) {
   return _storeTeam.apply(this, arguments);
 }
 function _storeTeam() {
-  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(key, data) {
-    var silent,
-      online,
-      _args18 = arguments;
-    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-      while (1) switch (_context18.prev = _context18.next) {
-        case 0:
-          silent = _args18.length > 2 && _args18[2] !== undefined ? _args18[2] : false;
-          _context18.next = 3;
-          return isOnline();
-        case 3:
-          online = _context18.sent;
-          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", key), data).then(function () {
-            if (!silent) showMessage("Team successfully store!");
-          })["catch"](function (error) {
-            showMessage("FAILED to store team(".concat(error, ")"), true, 'error');
-          });
-        case 5:
-        case "end":
-          return _context18.stop();
-      }
-    }, _callee18);
-  }));
-  return _storeTeam.apply(this, arguments);
-}
-function storeRecord(_x6, _x7) {
-  return _storeRecord.apply(this, arguments);
-} // ----------------
-// Utils
-function _storeRecord() {
-  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(key, data) {
+  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(key, data) {
     var silent,
       online,
       _args19 = arguments;
@@ -35231,6 +35201,38 @@ function _storeRecord() {
           return isOnline();
         case 3:
           online = _context19.sent;
+          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", key), data, {
+            merge: true
+          }).then(function () {
+            if (!silent) showMessage("Team successfully store!");
+          })["catch"](function (error) {
+            showMessage("FAILED to store team(".concat(error, ")"), true, 'error');
+          });
+        case 5:
+        case "end":
+          return _context19.stop();
+      }
+    }, _callee19);
+  }));
+  return _storeTeam.apply(this, arguments);
+}
+function storeRecord(_x6, _x7) {
+  return _storeRecord.apply(this, arguments);
+} // ----------------
+// Utils
+function _storeRecord() {
+  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20(key, data) {
+    var silent,
+      online,
+      _args20 = arguments;
+    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+      while (1) switch (_context20.prev = _context20.next) {
+        case 0:
+          silent = _args20.length > 2 && _args20[2] !== undefined ? _args20[2] : false;
+          _context20.next = 3;
+          return isOnline();
+        case 3:
+          online = _context20.sent;
           showMessage("Saving record...");
           if (!online) showTeam(data.team_number);
           (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key), data).then(function () {
@@ -35241,9 +35243,9 @@ function _storeRecord() {
           });
         case 7:
         case "end":
-          return _context19.stop();
+          return _context20.stop();
       }
-    }, _callee19);
+    }, _callee20);
   }));
   return _storeRecord.apply(this, arguments);
 }
@@ -35366,11 +35368,12 @@ window.showTeam = function (number) {
             storeTeam(number, {
               info: info,
               awards: awards,
-              offline: firebase.firestore.FieldValue["delete"]()
+              offline: (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.deleteField)()
             }).then(function () {
               showMessage("Team info successfully updated!");
               showTeam(number);
             })["catch"](function (error) {
+              console.error(error);
               showMessage("FAILED to update team info", true, 'error');
             });
           case 17:
@@ -35751,7 +35754,7 @@ window.deleteRecord = /*#__PURE__*/function () {
             if (result.isConfirmed) {
               showMessage("Deleting record...");
               if (!online) showTeam(team_number);
-              deleteDoc((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key)).then(function () {
+              (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.deleteDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key)).then(function () {
                 showMessage("Record successfully deleted!");
                 if (online) showTeam(team_number);
               })["catch"](function (error) {
@@ -35786,7 +35789,7 @@ window.addTeamViaTBA = function () {
           inputOptions = axios.get("https://www.thebluealliance.com/api/v3/team/frc7589/events/keys", {
             headers: {
               "accept": "application/json",
-              "X-TBA-Auth-Key": getConfig("tba_key")._value
+              "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
             }
           }).then(function (res) {
             if (res.status == 200) {
@@ -35803,7 +35806,7 @@ window.addTeamViaTBA = function () {
             title: 'Choose the Event Key:',
             input: 'select',
             inputOptions: inputOptions,
-            inputValue: getConfig("eventKey")._value,
+            inputValue: (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "eventKey").asString(),
             showCancelButton: true,
             confirmButtonText: 'Selete',
             showLoaderOnConfirm: true,
@@ -35811,7 +35814,7 @@ window.addTeamViaTBA = function () {
               return axios.get("https://www.thebluealliance.com/api/v3/event/" + value + "/teams/keys", {
                 headers: {
                   "accept": "application/json",
-                  "X-TBA-Auth-Key": getConfig("tba_key")._value
+                  "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
                 }
               }).then(function (res) {
                 if (res.status == 200) {
@@ -35905,13 +35908,40 @@ window.addTeamViaTBA = function () {
     }, _callee12);
   }))();
 };
+window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+  var number;
+  return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+    while (1) switch (_context13.prev = _context13.next) {
+      case 0:
+        _context13.next = 2;
+        return Swal.fire({
+          title: 'Enter Team Number',
+          input: 'number',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          confirmButtonText: 'Search'
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            return result.value;
+          }
+        });
+      case 2:
+        number = _context13.sent;
+        showTeam(number);
+      case 4:
+      case "end":
+        return _context13.stop();
+    }
+  }, _callee13);
+}));
 
 // Event Listener
 
 window.addEventListener('load', /*#__PURE__*/function () {
-  var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(event) {
-    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
+  var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(event) {
+    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
         case 0:
           if ('onLine' in window.navigator) {
             changeDBMode(window.navigator.onLine, true);
@@ -35921,12 +35951,12 @@ window.addEventListener('load', /*#__PURE__*/function () {
           }
         case 1:
         case "end":
-          return _context13.stop();
+          return _context14.stop();
       }
-    }, _callee13);
+    }, _callee14);
   }));
   return function (_x11) {
-    return _ref11.apply(this, arguments);
+    return _ref12.apply(this, arguments);
   };
 }());
 window.addEventListener('offline', function () {

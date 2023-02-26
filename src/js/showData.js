@@ -2,9 +2,12 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where, addDoc, setDoc, getDocs, deleteDoc, deleteField, Timestamp, disableNetwork, enableNetwork, getDoc } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where, addDoc, setDoc, getDocs, Timestamp, disableNetwork, enableNetwork, getDoc } from "firebase/firestore";
 import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+import { Chart } from 'chart.js/auto';
+import { forEach } from "lodash";
+import Swal from "sweetalert2";
 
 window.axios = require('axios');
 window.Swal = require('sweetalert2');
@@ -208,31 +211,13 @@ async function storeTeam(key, data, silent = false) {
     const online = await isOnline();
     setDoc(
         doc(db, "teams", key),
-        data,
-        { merge: true }
+        data
     ).then(() => {
         if(!silent) showMessage("Team successfully store!");
     }).catch((error) => {
         showMessage(`FAILED to store team(${error})`, true, 'error');
     });
 }
-
-async function storeRecord(key, data, silent = false) {
-    const online = await isOnline();
-    showMessage("Saving record...");
-    if(!online) showTeam(data.team_number);
-
-    setDoc(
-        doc(db, "records", key),
-        data
-    ).then(() => {
-        if(!silent) showMessage("Record successfully store!");
-        if(online) showTeam(data.team_number);
-    }).catch((error) => {
-        showMessage(`FAILED to store record(${error})`, true, 'error');
-    });
-}
-
 
 // ----------------
 // Utils
@@ -253,9 +238,6 @@ window.getRate = (data) => {
 window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");
     showPage("teamIndexScreen");
-    if(tba_available()) {
-        window.document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
-    }
 
     getTeams().then((teams) => {
         if(!teams.empty) {
@@ -285,22 +267,23 @@ window.getTeamIndex = () => {
 }
 
 window.showTeam = (number) => {
-    window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
-    window.document.getElementById('teamRecordList').classList.remove('hidden');
+    window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordTable');
+    window.document.getElementById('teamRecordTable').classList.remove('hidden');
     window.document.getElementById('teamInfo').classList.add('hidden');
-    window.document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
+    window.document.getElementById('teamCharts').classList.add('hidden');
+    window.document.querySelector('[page=teamRecordTable]').classList.replace('border-b-0', 'border-b-2');
     window.document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
+    window.document.querySelector('[page=teamCharts]').classList.replace('border-b-2', 'border-b-0');
 
     getTeams(number).then((team) => {
         (async () => {
             if(!team.empty) {
                 var teamData = team.data();
-                updateEleHTML("teamRecordList", "");
+                updateEleHTML("teamRecordTable", "");
                 showPage("teamViewScreen");
                 updateEleText("teamID", teamData.info.team_number);
                 updateEleText("teamName", teamData.info.nickname);
                 updateEleText("teamRookieYear", teamData.info.rookie_year);
-                window.document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate(${number})`);
 
                 if('onLine' in navigator && teamData.offline) {
                     if(navigator.onLine) {
@@ -331,18 +314,16 @@ window.showTeam = (number) => {
                         storeTeam(number, {
                             info: info,
                             awards: awards,
-                            offline: deleteField()
+                            offline: firebase.firestore.FieldValue.delete()
                         }).then(() => {
                             showMessage("Team info successfully updated!");
                             showTeam(number);
                         })
                         .catch((error) => {
-                            console.error(error);
                             showMessage("FAILED to update team info", true, 'error');
                         });
                     }
                 }
-                
 
                 var html = "<h3>Awards</h3><ol>";
 
@@ -369,14 +350,33 @@ window.showTeam = (number) => {
             getAllRecords(number).then((records) => {
                 if(!records.empty) {
                     var htmlCode = "";
+                    /*
+                    function getKeyByValue(object, value) {
+                        return Object.keys(object).find(key => object[key] === value);
+                    }
+                    */
+                    var data = {
+                        labels: [],
+                        datasets: []
+                    };
+                    var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+                    Object.keys(parameters).forEach((key) => {
+                        if(parameters[key].type != "number") return;
+                        data.datasets.push({
+                            label: parameters[key].name,
+                            alias: parameters[key].alias,
+                            data: [],
+                            borderWidth: 1
+                        });
+                    });
+                    console.log(data);
+                    var i = 0;
                     records.forEach((record) => {
+                        console.log(record.data());
+                        data.labels.push(record.id);
+
                         var record_data = record.data();
                         htmlCode += `<div class="bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative">
-                            <button class="w-5 h-5 absolute top-2 right-2" onclick="deleteRecord('${record.id}', '${number}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                </svg>
-                            </button>
                             <div>
                                 <h1 class="text-lg flex items-center space-x-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -394,17 +394,48 @@ window.showTeam = (number) => {
                             <div class="prose w-full">
                                 <ul>`;
                         Object.keys(record_data.parameters).forEach((key) => {
+                            const index = data.datasets.findIndex(obj => obj.alias == key);
+                            if(index != -1) data.datasets[index].data.push(record_data.parameters[key]);
                             htmlCode += `<li class="text-blue-800 space-x-1">${key}:<span class="font-bold">${record_data.parameters[key]}</span></li>`;
                         });
                         htmlCode += '</ul></div></div>';
+                        
+                        i++;
                     });
-                    updateEleHTML("teamRecordList", htmlCode);
+                    new Chart(document.getElementById('chart'), {
+                        type: 'bar',
+                        data: data,
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    updateEleHTML("teamRecordTable", htmlCode);
                 } else {
-                    copyHTML("teamRecordList", "noResultScreen");
+                    copyHTML("teamRecordTable", "noResultScreen");
                 }
             });
         })();
     });
+}
+
+window.search = async () => {
+    const number = await Swal.fire({
+        title: 'Enter Team Number',
+        input: 'number',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        confirmButtonText: 'Search',
+    }).then((result) => {
+        if(result.isConfirmed) {
+            return result.value;
+        }
+    });
+    showTeam(number);
 }
 
 window.sendPassswordReset = async () => {
@@ -504,334 +535,6 @@ window.userLogin = async () => {
     });
 
     return true;
-}
-
-window.addTeam = () => {
-    Swal.fire({
-        title: 'Enter Team Number',
-        input: 'number',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Search',
-        showLoaderOnConfirm: true,
-        preConfirm: (number) => {
-            if('onLine' in navigator) {
-                if(!navigator.onLine) {
-                    return {
-                        requireName: true,
-                        number: number
-                    };
-                }
-            }
-            return axios.get("https://www.thebluealliance.com/api/v3/team/frc" + number, {
-                        headers: {
-                            "accept": "application/json",
-                            "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                        }
-                    }).then(res => {
-                        if(res.status == 200) {
-                            return res.data;
-                        } else {
-                            Swal.showValidationMessage(
-                                `Request failed`
-                            );
-                        }
-                    }).catch(error => {
-                        Swal.showValidationMessage(
-                            `Request failed: ${error}`
-                        );
-                    });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-        if (result.isConfirmed) {
-            if(result.value.requireName) {
-                Swal.fire({
-                    title: 'Enter Team Name',
-                    input: 'text',
-                    inputAttributes: {
-                        autocapitalize: 'off'
-                    },
-                    preConfirm: (input) => {
-                        return input;
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Add',
-                    showLoaderOnConfirm: true,
-                }).then((response) => {
-                    if (response.isConfirmed) {
-                        Swal.fire({
-                            title: `Adding FRC # ${result.value.number}\n(aka "${response.value}") ?`,
-                            showCancelButton: true,
-                            confirmButtonText: 'Add',
-                        }).then((action) => {
-                            if(action.isConfirmed) storeTeam(result.value.number.toString(), {
-                                info: {
-                                    team_number: result.value.number.toString(),
-                                    nickname: response.value,
-                                },
-                                offline: true
-                            });
-                            getTeamIndex();
-                        });
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: `Adding FRC # ${result.value.team_number}\n(aka "${result.value.nickname}") ?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Add',
-                }).then((response) => {
-                    const awards = async () => {
-                        const data =  await axios.get(`https://www.thebluealliance.com/api/v3/team/frc${result.value.team_number}/awards`, {
-                                    headers: {
-                                        "accept": "application/json",
-                                        "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                                    }
-                                }).then(res => {
-                                    console.table(res.data);
-                                    if(res.status == 200) {
-                                        return res.data;
-                                    }
-                                    return [];
-                                }).catch(error => {
-                                    console.log(error);
-                                    return [];
-                                });
-                        return data;
-                    };
-                    awards().then(awards_result => {
-                        var data = {
-                            info: result.value,
-                            awards: awards_result
-                        };
-                        console.log(data);
-                        if(response.isConfirmed) storeTeam(result.value.team_number.toString(), data);
-                        getTeamIndex();
-                    });
-                });
-            }
-        }
-    });
-}
-
-window.recordCreate = async (number = null) => {
-    if(number == null) {
-        number = await Swal.fire({
-                title: 'Enter Team Number',
-                input: 'number',
-                inputAttributes: {
-                    autocapitalize: 'off'
-                },
-                confirmButtonText: 'Start',
-            }).then((result) => {
-                if(result.isConfirmed) {
-                    return result.value;
-                }
-            });
-    }
-    console.log(number);
-    var html = `<h1 class="text-lg lg:text-xl font-bold">Record of #<span id="recordTeamID">${number}</span></h1>`;
-    JSON.parse(getValue(remoteConfig, "parameters").asString()).forEach((parameter) => {
-        if(parameter.type == "textarea") {
-            html += `<div>
-                        <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
-                        <div class="mt-1">
-                            <textarea id="${parameter.alias}" name="${parameter.alias}" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}"></textarea>
-                        </div>
-                    </div>`;
-        } else {
-            html += `<div>
-                        <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
-                        <div class="mt-1">
-                            <input id="${parameter.alias}" name="${parameter.alias}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${(parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
-                        </div>
-                    </div>`;
-        }
-    });
-    updateEleHTML("form_content", html);
-    showPage("recordCreateScreen");
-}
-
-window.recordSave = () => {
-    
-    var data = {
-        team_number: window.document.getElementById('recordTeamID').innerText.toString(),
-        parameters: {},
-        timestamp: Timestamp.now(),
-        userId: auth.currentUser.uid
-    };
-
-    JSON.parse(getValue(remoteConfig, 'parameters').asString()).forEach((parameter) => {
-        if(parameter.type == 'number') {
-            data['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
-        } else {
-            data['parameters'][parameter.alias] = window.document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
-        }
-    });
-
-    storeRecord(_uuid(), data);
-}
-
-window.deleteRecord = async (key, team_number) => {
-    const online = await isOnline();
-    Swal.fire({
-        icon: 'warning',
-        title: `Delete Confirm`,
-        text: `Delete Record '${key}'?`,
-        confirmButtonText: 'Delete',
-        showCancelButton: true
-    }).then((result) => {
-        if(result.isConfirmed) {
-            showMessage("Deleting record...");
-            if(!online) showTeam(team_number);
-            deleteDoc(doc(db, "records", key))
-                .then(() => {
-                    showMessage("Record successfully deleted!");
-                    if(online) showTeam(team_number);
-                })
-                .catch((error) => {
-                    showMessage(`FAILED to delete record(${error})`, true, 'error');
-                });
-        }
-    });
-}
-
-window.addTeamViaTBA = () => {
-    if(!isOnline()) {
-        Swal.fire({
-            icon: "warning",
-            title: "Internet Connection Required!",
-            text: "Please connect to the Internet before using this function."
-        });
-        return;
-    }
-    (async () => {
-        const inputOptions = axios.get(
-            "https://www.thebluealliance.com/api/v3/team/frc7589/events/keys",
-            {
-                headers: {
-                    "accept": "application/json",
-                    "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                }
-            }).then(res => {
-                if(res.status == 200) {
-                    var result = {};
-                    res.data.forEach((key) => {
-                        result[key] = key;
-                    });
-                    return result;
-                }
-            }).catch(error => {
-                Swal.showValidationMessage(
-                    `Request failed: ${error}`
-                );
-            });
-
-        Swal.fire({
-            title: 'Choose the Event Key:',
-            input: 'select',
-            inputOptions: inputOptions,
-            inputValue: getValue(remoteConfig, "eventKey").asString(),
-            showCancelButton: true,
-            confirmButtonText: 'Selete',
-            showLoaderOnConfirm: true,
-            preConfirm: (value) => {
-                return axios.get("https://www.thebluealliance.com/api/v3/event/" + value + "/teams/keys", {
-                    headers: {
-                        "accept": "application/json",
-                        "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                    }
-                }).then(res => {
-                    if(res.status == 200) {
-                        return res.data;
-                    }
-                }).catch(error => {
-                    console.log(error.toJSON());
-                });
-            },
-            customClass: {
-                input: "px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 focus:outline-none focus:border-sky-500 focus:ring-sky-500 rounded-md sm:text-sm focus:ring-1 invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 disabled:shadow-none"
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if(result.isConfirmed) {
-                Swal.fire({
-                    title: `Add ${result.value.length} teams include?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Add',
-                    showLoaderOnConfirm: true,
-                    allowOutsideClick: () => !Swal.isLoading(),
-                    preConfirm: () => {
-                        result.value.forEach((team) => {
-                            (async () => {
-
-                                const info = await axios.get(`https://www.thebluealliance.com/api/v3/team/${team}`, {
-                                                headers: {
-                                                    "accept": "application/json",
-                                                    "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                                                }
-                                            }).then(res => {
-                                                console.table(res.data);
-                                                if(res.status == 200) {
-                                                    return res.data;
-                                                }
-                                                return [];
-                                            }).catch(error => {
-                                                console.log(error);
-                                                return [];
-                                            });
-
-                                const awards = await axios.get(`https://www.thebluealliance.com/api/v3/team/${team}/awards`, {
-                                                headers: {
-                                                    "accept": "application/json",
-                                                    "X-TBA-Auth-Key": getValue(remoteConfig, "tba_key").asString()
-                                                }
-                                            }).then(res => {
-                                                console.table(res.data);
-                                                if(res.status == 200) {
-                                                    return res.data;
-                                                }
-                                                return [];
-                                            }).catch(error => {
-                                                console.log(error);
-                                                return [];
-                                            });
-
-                                var data = {
-                                    info: info,
-                                    awards: awards
-                                };
-
-                                console.log(data);
-
-                                storeTeam(info.team_number.toString(), data);
-                            })();
-                        });
-                        getTeamIndex();
-                    }
-                });
-            }
-        });
-    })();
-}
-
-window.searchTeam = async () => {
-    const number = await Swal.fire({
-        title: 'Enter Team Number',
-        input: 'number',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        confirmButtonText: 'Search',
-    }).then((result) => {
-        if(result.isConfirmed) {
-            return result.value;
-        }
-    });
-    showTeam(number);
 }
 
 // Event Listener
