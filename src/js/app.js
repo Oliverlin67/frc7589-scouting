@@ -1,0 +1,667 @@
+// Import the functions you need from the SDKs you need
+
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where, addDoc, setDoc, getDocs, Timestamp, disableNetwork, enableNetwork, getDoc } from "firebase/firestore";
+import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+
+window.axios = require('axios');
+window.Swal = require('sweetalert2');
+
+window.showMessage = (title, top = false, type = 'info', after) => {
+
+    let timerInterval;
+
+    console.log(title);
+
+    var bgColor, textColor;
+
+    switch(type) {
+        case 'info':
+            bgColor = 'bg-slate-800';
+            textColor = 'text-slate-50';
+            break;
+        case 'warning':
+            bgColor = 'bg-amber-500';
+            textColor = 'text-amber-100';
+            break;
+        case 'error':
+            bgColor = 'bg-red-500';
+            textColor = 'text-red-100';
+            break;
+    }
+
+    Swal.fire({
+        title: title,
+        position: top ? 'top' : 'bottom',
+        timer: 1500,
+        timerProgressBar: true,
+        willClose: () => {
+            clearInterval(timerInterval);
+            after
+        },
+        showClass: {
+            popup: `
+            animate__animated
+            ${top ? 'animate__fadeInDown' : 'animate__fadeInUp'}
+            animate__faster
+            `
+        },
+        hideClass: {
+            popup: `
+            animate__animated
+            ${top ? 'animate__fadeOutUp' : 'animate__fadeOutDown'}
+            animate__faster
+            `
+        },
+        customClass: {
+            container: 'p-1.5',
+            title: `p-2.5 ${textColor} text-base font-medium`,
+            popup: `rounded-md ${bgColor}`
+        },
+        padding: '0',
+        grow: 'row',
+        showConfirmButton: false,
+        showCloseButton: false,
+        backdrop: false,
+        heightAuto: false
+    });
+}
+
+window._uuid = () => {
+    var d = Date.now();
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+        d += performance.now(); //use high-precision timer if available
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+};
+
+var last_page;
+
+window.updateEleText = (id, text) => {
+    window.document.getElementById(id).innerText = text;
+}
+
+window.updateEleHTML = (id, html) => {
+    window.document.getElementById(id).innerHTML = html;
+}
+
+window.showPage = (name) => {
+    if(last_page != name) window.document.getElementById(name).classList.replace("hidden", "box");
+    if(last_page != null && last_page != name) window.document.getElementById(last_page).classList.replace("box", "hidden");
+    last_page = name;
+}
+
+window.copyHTML = (target, source) => {
+    window.document.getElementById(target).innerHTML = window.document.getElementById(source).innerHTML;
+}
+
+// Firebase
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyCQ5cg4VRFiVxeT6JQPKI1vd3kB938w_g0",
+    authDomain: "frc-7589.firebaseapp.com",
+    databaseURL: "https://frc-7589-default-rtdb.firebaseio.com",
+    projectId: "frc-7589",
+    storageBucket: "frc-7589.appspot.com",
+    messagingSenderId: "283240547457",
+    appId: "1:283240547457:web:ce55f744bc4b4d46653980",
+    measurementId: "G-2EB11FYT18"
+};
+  
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const remoteConfig = getRemoteConfig(app);
+const auth = getAuth(app);
+
+enableIndexedDbPersistence(db)
+    .catch((err) => {
+        console.log("DB Error: " + err);
+    });
+
+function tba_available() {
+    return getValue(remoteConfig, "tba_key").asString() != null;
+}
+
+function fetchSettings(silent = false) {
+    fetchAndActivate(remoteConfig)
+        .then(() => {
+            if(!silent) showMessage("Config Fetched");
+        }).catch((err) => {
+            showMessage("Config Error: " + err, true, 'error');
+        });
+}
+
+async function signIn(email, password) {
+    return await signInWithEmailAndPassword(auth, email, password)
+        .then((user) => {
+            return true;
+        })
+        .catch((err) => {
+            const errorCode = err.code;
+            const errorMessage = err.message;
+        });
+}
+
+async function changeDBMode(online, silent = false) {
+    if(online) {
+        enableNetwork(db).then(() => {
+            if(!silent) showMessage("mode: ONLINE");
+        });
+    } else {
+        disableNetwork(db).then(() => {
+            if(!silent) showMessage("mode: OFFLINE");
+        });
+    }
+}
+
+async function getAllRecords(number = null) {
+    showMessage("Fetching records...");
+    if(number != null) {
+        return await getDocs(query(collection(db, "records"), where("team_number", "==", number)));
+    } else {
+        return await getDocs(collection(db, "records"));
+    }
+}
+
+async function getTeams(number = null) {
+    showMessage("Fetching teams...");
+    if(number != null) {
+        const docSnap = await getDoc(doc(db, "teams", number));
+        if(docSnap.exists()) {
+            return docSnap;
+        } else {
+            showMessage("Team no found");
+        }
+    } else {
+        return await getDocs(collection(db, "teams"));
+    }
+}
+
+async function storeTeam(key, data, silent = false) {
+    const online = await isOnline();
+    setDoc(
+        doc(db, "teams", key),
+        data
+    ).then(() => {
+        if(!silent) showMessage("Team successfully store!");
+    }).catch((error) => {
+        showMessage("FAILED to store team", true, 'error');
+    });
+}
+
+async function storeRecord(key, data) {
+    //const online = await isOnline();
+    showMessage("Saving record...");
+    //if(!online) showTeam(data.team_number);
+
+    setDoc(
+        doc(db, "records", key),
+        data
+    ).then(() => {
+        if(!silent) showMessage("Record successfully store!");
+        showTeam(data.team_number);
+    }).catch((error) => {
+        showMessage("FAILED to store record", true, 'error');
+    });
+}
+
+async function deleteRecord(key, team_number) {
+    //const online = await isOnline();
+    Swal.fire({
+        icon: 'warning',
+        title: `Delete Confirm`,
+        text: `Delete Record '${key}'?`,
+        confirmButtonText: 'Delete',
+        showCancelButton: true
+    }).then((result) => {
+        if(result.isConfirmed) {
+            showMessage("Deleting record...");
+            deleteDoc(doc(db, "records", key))
+                .then(() => {
+                    showMessage("Record successfully deleted!");
+                    showTeam(team_number);
+                })
+                .catch((error) => {
+                    showMessage(`FAILED to delete record(${error})`, true, 'error');
+                });
+        }
+    });
+}
+
+
+// ----------------
+// Utils
+
+window.getRate = (data) => {
+    var formula = getValue("formula").asString();
+    var parameters = JSON.parse(getValue("parameters").asString());
+    parameters.forEach((parameter) => {
+        formula = formula.replace(parameter.alias, data[parameter.alias]);
+    });
+    return eval(formula);
+}
+
+// ----------------
+
+// Actions
+
+window.getTeamIndex = () => {
+    copyHTML("team-index", "loadingScreen");
+    showPage("teamIndexScreen");
+    if(tba_available()) {
+        window.document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
+    }
+
+    getTeams().then((teams) => {
+        if(!teams.empty) {
+            var html = "";
+            teams.forEach(async (team) => {
+                var teamData = team.data();
+                var rate = 0;
+                await getAllRecords(team.id).then((records) => {
+                    records.forEach((record) => {
+                        var recordData = record.data();
+                        rate += getRate(recordData.parameters);
+                    });
+                    html += '<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam(\''+ team.id +'\')">' +
+                            '<div><h1 class="text-xl xl:text-2xl">Team #' + teamData.info.team_number +'</h1><h2 class="xl:text-lg">'+ teamData.info.nickname +'</h2></div>'+
+                            '<div class="flex items-center justify-between space-x-2"><div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">' +
+                            '<h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg><span>Rate:</span></h3>'+
+                            '<p class="text-4xl font-bold text-center">'+ Math.round(rate/records.size*100)/100 +'</p></div>'+
+                            '<div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4"><h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg><span>Records:</span></h3>'+
+                            '<p class="text-4xl font-bold text-center">' + records.size + '</p></div></div></div>';
+                });
+                updateEleHTML("team-index", html);
+            });
+        } else {
+            copyHTML("team-index", "noResultScreen");
+        }
+    });
+}
+
+window.showTeam = (number) => {
+    window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
+    window.document.getElementById('teamRecordList').classList.remove('hidden');
+    window.document.getElementById('teamInfo').classList.add('hidden');
+    window.document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
+    window.document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
+
+    getTeams(number).then((team) => {
+        (async () => {
+            if(!team.empty) {
+                var teamData = team.data();
+                updateEleHTML("teamRecordList", "");
+                showPage("teamViewScreen");
+                updateEleText("teamID", teamData.info.team_number);
+                updateEleText("teamName", teamData.info.nickname);
+                updateEleText("teamRookieYear", teamData.info.rookie_year);
+                window.document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate(${number})`);
+
+                if('onLine' in navigator && teamData.offline) {
+                    if(navigator.onLine) {
+                        const info = await axios.get(`https://www.thebluealliance.com/api/v3/team/frc${number}`, {
+                                                    headers: {
+                                                        "accept": "application/json",
+                                                        "X-TBA-Auth-Key": getConfig("tba_key")._value
+                                                    }
+                                                }).then(res => {
+                                                    if(res.status == 200) {
+                                                        return res.data;
+                                                    }
+                                                }).catch(error => {
+                                                    showMessage("FAILED to fetch team info", true, 'warning');
+                                                });
+                        const awards = await axios.get(`https://www.thebluealliance.com/api/v3/team/frc${number}/awards`, {
+                                                    headers: {
+                                                        "accept": "application/json",
+                                                        "X-TBA-Auth-Key": getConfig("tba_key")._value
+                                                    }
+                                                }).then(res => {
+                                                    if(res.status == 200) {
+                                                        return res.data;
+                                                    }
+                                                }).catch(error => {
+                                                    showMessage("FAILED to fetch team info", true, 'warning');
+                                                });
+                        team.ref.update({
+                            info: info,
+                            awards: awards,
+                            offline: firebase.firestore.FieldValue.delete()
+                        }).then(() => {
+                            showMessage("Team info successfully updated!");
+                            showTeam(number);
+                        })
+                        .catch((error) => {
+                            showMessage("FAILED to update team info", true, 'error');
+                        });
+                    }
+                }
+                
+
+                var html = "<h3>Awards</h3><ol>";
+
+                if(teamData.awards !== undefined) {
+                    teamData.awards.forEach((award) => {
+                        html += "<li><ul>";
+                        Object.keys(award).forEach((key) => {
+                            if(typeof award[key] === "object") return;
+                            html += '<li>' + key + ': ' + award[key] + '</li>';
+                        });
+                        html += "</ul></li>";
+                    });
+                }
+                html += "</ol><h3>About</h3><ul>";
+                if(typeof teamData.info !== undefined) {
+                    Object.keys(teamData.info).forEach((key) => {
+                        if(key == "key" || key == "nickname" || key == "team_number" || teamData.info[key] == null) return;
+                        html += '<li>' + key + ': ' + (key == "website" ? '<a href="' + teamData.info[key] + '">' + teamData.info[key] + '</a>' : teamData.info[key] ) + '</li>';
+                    });
+                }
+                html += "</ul>";
+                updateEleHTML("teamInfo", html);
+            }
+            getAllRecords(number).then((records) => {
+                if(!records.empty) {
+                    var htmlCode = "";
+                    records.forEach((record) => {
+                        var record_data = record.data();
+                        htmlCode += `<div class="bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative">
+                            <button class="w-5 h-5 absolute top-2 right-2" onclick="deleteRecord('${record.id}', '${number}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </button>
+                            <div>
+                                <h1 class="text-lg flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                                    </svg>
+                                    <span>${record.id}</span>
+                                </h1>
+                                <h2 class="text-sm flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>${moment(new Date(record_data.timestamp.seconds*1000)).format('YYYY/MM/DD, HH:mm:ss')}</span>
+                                </h2>
+                            </div>
+                            <div class="prose w-full">
+                                <ul>`;
+                        Object.keys(record_data.parameters).forEach((key) => {
+                            htmlCode += `<li class="text-blue-800 space-x-1">${key}:<span class="font-bold">${record_data.parameters[key]}</span></li>`;
+                        });
+                        htmlCode += '</ul></div></div>';
+                    });
+                    updateEleHTML("teamRecordList", htmlCode);
+                } else {
+                    copyHTML("teamRecordList", "noResultScreen");
+                }
+            });
+        })();
+    });
+}
+
+window.sendPassswordReset = async () => {
+    await Swal.fire({
+        title: 'Forgot Password',
+        html: `<input type="text" id="email" class="swal2-input w-7/8" placeholder="Email">
+        <button class="text-blue-700 mt-4 text-sm" onclick="userLogin()">Login?</button>`,
+        confirmButtonText: 'Send email',
+        focusConfirm: false,
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+            const email = Swal.getPopup().querySelector('#email').value;
+
+            if (!email) {
+                Swal.showValidationMessage(`Please enter your email`);
+            }
+
+            return await auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    return true;
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    Swal.showValidationMessage(`Wrong Email`);
+                });
+        },
+        showClass: {
+            popup: `
+            animate__animated
+            animate__fadeInUp
+            animate__faster
+            `
+        },
+        hideClass: {
+            popup: `
+            animate__animated
+            animate__fadeOutDown
+            animate__faster
+            `
+        },
+        customClass: {
+            container: 'p-1.5',
+            htmlContainer: 'm-0 max-w-full flex flex-col spacep-y-2',
+            popup: 'max-w-lg w-full'
+        },
+        allowOutsideClick: false
+    }).then((result) => {
+        showMessage("Password rest email Sent!");
+        setTimeout(() => {
+            userLogin();
+        }, 1500);
+    });
+}
+
+window.userLogin = async () => {
+    await Swal.fire({
+        title: 'Account Login',
+        html: `<input type="text" id="email" class="swal2-input w-7/8" placeholder="Email">
+        <input type="password" id="password" class="swal2-input w-7/8" placeholder="Password">
+        <button class="text-blue-700 mt-4 text-sm" onclick="sendPassswordReset()">Forget Password?</button>`,
+        confirmButtonText: 'Login',
+        focusConfirm: false,
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+            const email = Swal.getPopup().querySelector('#email').value;
+            const password = Swal.getPopup().querySelector('#password').value;
+
+            if (!email || !password) {
+                Swal.showValidationMessage(`Please enter email and password`);
+            }
+
+            return await signIn(email, password);
+        },
+        showClass: {
+            popup: `
+            animate__animated
+            animate__fadeInUp
+            animate__faster
+            `
+        },
+        hideClass: {
+            popup: `
+            animate__animated
+            animate__fadeOutDown
+            animate__faster
+            `
+        },
+        customClass: {
+            container: 'p-1.5',
+            htmlContainer: 'm-0 max-w-full flex flex-col spacep-y-2',
+            popup: 'max-w-lg'
+        },
+        allowOutsideClick: false
+    }).then((result) => {
+        showMessage("Login Successful");
+    });
+
+    return true;
+}
+
+window.addTeam = () => {
+    Swal.fire({
+        title: 'Enter Team Number',
+        input: 'number',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Search',
+        showLoaderOnConfirm: true,
+        preConfirm: (number) => {
+            if('onLine' in navigator) {
+                if(!navigator.onLine) {
+                    return {
+                        requireName: true,
+                        number: number
+                    };
+                }
+            }
+            return axios.get("https://www.thebluealliance.com/api/v3/team/frc" + number, {
+                        headers: {
+                            "accept": "application/json",
+                            "X-TBA-Auth-Key": getConfig("tba_key")._value
+                        }
+                    }).then(res => {
+                        if(res.status == 200) {
+                            return res.data;
+                        } else {
+                            Swal.showValidationMessage(
+                                `Request failed`
+                            );
+                        }
+                    }).catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        );
+                    });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if(result.value.requireName) {
+                Swal.fire({
+                    title: 'Enter Team Name',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    preConfirm: (input) => {
+                        return input;
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Add',
+                    showLoaderOnConfirm: true,
+                }).then((response) => {
+                    if (response.isConfirmed) {
+                        Swal.fire({
+                            title: `Adding FRC # ${result.value.number}\n(aka "${response.value}") ?`,
+                            showCancelButton: true,
+                            confirmButtonText: 'Add',
+                        }).then((action) => {
+                            if(action.isConfirmed) storeTeam(result.value.number.toString(), {
+                                info: {
+                                    team_number: result.value.number.toString(),
+                                    nickname: response.value,
+                                },
+                                offline: true
+                            });
+                            getTeamIndex();
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: `Adding FRC # ${result.value.team_number}\n(aka "${result.value.nickname}") ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Add',
+                }).then((response) => {
+                    const awards = async () => {
+                        const data =  await axios.get(`https://www.thebluealliance.com/api/v3/team/frc${result.value.team_number}/awards`, {
+                                    headers: {
+                                        "accept": "application/json",
+                                        "X-TBA-Auth-Key": getConfig("tba_key")._value
+                                    }
+                                }).then(res => {
+                                    console.table(res.data);
+                                    if(res.status == 200) {
+                                        return res.data;
+                                    }
+                                    return [];
+                                }).catch(error => {
+                                    console.log(error);
+                                    return [];
+                                });
+                        return data;
+                    };
+                    awards().then(awards_result => {
+                        var data = {
+                            info: result.value,
+                            awards: awards_result
+                        };
+                        console.log(data);
+                        if(response.isConfirmed) storeTeam(result.value.team_number.toString(), data);
+                        getTeamIndex();
+                    });
+                });
+            }
+        }
+    });
+}
+
+
+// Event Listener
+
+window.addEventListener('load', async (event) => {
+    if('onLine' in window.navigator) {
+        changeDBMode(window.navigator.onLine, true);
+        if(window.navigator.onLine) {
+            fetchSettings(true);
+        }
+    }
+});
+
+window.addEventListener('offline', () => { 
+    changeDBMode(false);
+});
+
+window.addEventListener('online', () => { 
+    changeDBMode(true);
+    fetchSettings();
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const uid = user.uid;
+        getTeamIndex();
+    } else {
+        userLogin();
+    }
+});
+
+document.getElementById('teamContainer').addEventListener('click', (e) => {
+    if (e.target.classList.contains('tab-button')) {
+        if(document.getElementById('teamContainer').getAttribute('current') != e.target.getAttribute('page')) {
+            window.document.getElementById(document.getElementById('teamContainer').getAttribute('current')).classList.toggle('hidden');
+            window.document.getElementById(e.target.getAttribute('page')).classList.toggle('hidden');
+            e.target.classList.replace('border-b-0', 'border-b-2');
+            window.document.querySelector(`[page=${document.getElementById('teamContainer').getAttribute('current')}]`).classList.replace('border-b-2', 'border-b-0');
+            window.document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
+        }
+    }
+});
