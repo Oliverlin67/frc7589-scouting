@@ -35704,10 +35704,12 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
         console.log(number);
         html = "<h1 class=\"text-lg lg:text-xl font-bold\">Record of #<span id=\"recordTeamID\">".concat(number, "</span></h1>");
         JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString()).forEach(function (parameter) {
-          if (parameter.type == "textarea") {
-            html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <textarea id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\"></textarea>\n                        </div>\n                    </div>");
-          } else {
-            html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <input id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                        </div>\n                    </div>");
+          switch (parameter.type) {
+            case "textarea":
+              html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <textarea id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\"></textarea>\n                        </div>\n                    </div>");
+              break;
+            default:
+              html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <input id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block ").concat(parameter.type != "checkbox" ? 'w-full' : '', " rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                        </div>\n                    </div>");
           }
         });
         updateEleHTML("form_content", html);
@@ -35728,6 +35730,8 @@ window.recordSave = function () {
   JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, 'parameters').asString()).forEach(function (parameter) {
     if (parameter.type == 'number') {
       data['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
+    } else if (parameter.type == 'checkbox') {
+      data['parameters'][parameter.alias] = document.getElementById(parameter.alias).checked;
     } else {
       data['parameters'][parameter.alias] = window.document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
     }

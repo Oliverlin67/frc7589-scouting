@@ -277,7 +277,7 @@ window.getTeamIndex = () => {
                     alias: parameters[key].alias,
                     data: []
                 });
-            });
+            });0
             teams.forEach(async (team) => {
                 var teamData = team.data();
                 var rate = 0;

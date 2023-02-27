@@ -657,18 +657,20 @@ window.recordCreate = async (number = null) => {
     console.log(number);
     var html = `<h1 class="text-lg lg:text-xl font-bold">Record of #<span id="recordTeamID">${number}</span></h1>`;
     JSON.parse(getValue(remoteConfig, "parameters").asString()).forEach((parameter) => {
-        if(parameter.type == "textarea") {
-            html += `<div>
+        switch(parameter.type) {
+            case "textarea":
+                html += `<div>
                         <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
                         <div class="mt-1">
                             <textarea id="${parameter.alias}" name="${parameter.alias}" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}"></textarea>
                         </div>
                     </div>`;
-        } else {
-            html += `<div>
+                break;
+            default:
+                html += `<div>
                         <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
                         <div class="mt-1">
-                            <input id="${parameter.alias}" name="${parameter.alias}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${(parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
+                            <input id="${parameter.alias}" name="${parameter.alias}" class="mt-1 block ${parameter.type != "checkbox" ? 'w-full' : ''} rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${(parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
                         </div>
                     </div>`;
         }
@@ -689,6 +691,8 @@ window.recordSave = () => {
     JSON.parse(getValue(remoteConfig, 'parameters').asString()).forEach((parameter) => {
         if(parameter.type == 'number') {
             data['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
+        } else if(parameter.type == 'checkbox') {
+            data['parameters'][parameter.alias] = document.getElementById(parameter.alias).checked;
         } else {
             data['parameters'][parameter.alias] = window.document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
         }

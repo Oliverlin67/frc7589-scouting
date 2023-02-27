@@ -77899,6 +77899,7 @@ window.getTeamIndex = function () {
           data: []
         });
       });
+      0;
       teams.forEach( /*#__PURE__*/function () {
         var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(team) {
           var teamData, rate, teamDatasets;
