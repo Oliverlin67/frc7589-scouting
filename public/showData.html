@@ -57,6 +57,27 @@
              <!-- Team index-->
              <div class="w-full space-y-3 hidden p-2" id="teamIndexScreen">
                 <h1 class="text-center text-2xl lg:text-4xl text-blue-800">Teams</h1>
+                <button 
+                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="searchTeam()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>                                                                
+                    <span>Search Team</span>
+                </button>
+                <button 
+                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onclick="exportExcel()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden md:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>                                                        
+                    <span>Export All</span>
+                </button>
+                <hr/>
+                <canvas id="allTeamChart">
+                    <p>Unsupport Browser</p>
+                </canvas>
+                <hr/>
                 <div class="flex flex-col items-center justify-center w-full space-y-3" id="team-index">
                     <div class="h-screen w-full flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
@@ -87,7 +108,7 @@
                     <div class="px-4">
                         <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamRecordTable"></div>
                         <div class="flex flex-col items-center justify-center w-full space-y-3" id="teamCharts">
-                            <canvas id="chart"></canvas>
+                            <canvas id="perTeamChart"><p>Unsupport Browser</p></canvas>
                         </div>
                         <div class="text-slate-600 hidden prose" id="teamInfo"></div>
                     </div>

@@ -235,6 +235,29 @@ window.getRate = (data) => {
 
 // Actions
 
+const allTeamChart = new Chart(document.getElementById('allTeamChart'), {
+    type: 'bar',
+    options: {
+        indexAxis: 'y',
+        scales: {
+            x: {
+                beginAtZero: true
+            }
+        },
+        elements: {
+            bar: {
+                borderWidth: 2,
+            }
+        },
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'right',
+            },
+        }
+    }
+});
+
 window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");
     showPage("teamIndexScreen");
@@ -242,29 +265,99 @@ window.getTeamIndex = () => {
     getTeams().then((teams) => {
         if(!teams.empty) {
             var html = "";
+            var data = {
+                labels: [],
+                datasets: []
+            };
+            var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+            Object.keys(parameters).forEach((key) => {
+                if(parameters[key].type != "number") return;
+                data.datasets.push({
+                    label: parameters[key].name + "(Average)",
+                    alias: parameters[key].alias,
+                    data: []
+                });
+            });
             teams.forEach(async (team) => {
                 var teamData = team.data();
                 var rate = 0;
+                var teamDatasets = {};
+                
+                //var i = 0;
                 await getAllRecords(team.id).then((records) => {
+                    if(!records.empty) data.labels.push(team.id);
                     records.forEach((record) => {
                         var recordData = record.data();
                         rate += getRate(recordData.parameters);
+                        Object.keys(recordData.parameters).forEach((key) => {
+                            const index = data.datasets.findIndex(obj => obj.alias == key);
+                            if(teamDatasets[key] === undefined) teamDatasets[key] = 0;
+                            if(index != -1) {
+                                teamDatasets[key] += recordData.parameters[key];
+                            }
+                        });
                     });
-                    html += '<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam(\''+ team.id +'\')">' +
-                            '<div><h1 class="text-xl xl:text-2xl">Team #' + teamData.info.team_number +'</h1><h2 class="xl:text-lg">'+ teamData.info.nickname +'</h2></div>'+
-                            '<div class="flex items-center justify-between space-x-2"><div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">' +
-                            '<h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg><span>Rate:</span></h3>'+
-                            '<p class="text-4xl font-bold text-center">'+ Math.round(rate/records.size*100)/100 +'</p></div>'+
-                            '<div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4"><h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg><span>Records:</span></h3>'+
-                            '<p class="text-4xl font-bold text-center">' + records.size + '</p></div></div></div>';
+                    html += `<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam('${team.id}')">
+                                <div>
+                                    <h1 class="text-xl xl:text-2xl">Team #${teamData.info.team_number}</h1>
+                                    <h2 class="xl:text-lg">${teamData.info.nickname}</h2>
+                                </div>
+                                <div class="flex items-center justify-between space-x-2">
+                                    <div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">
+                                        <h3 class="text-lg lg:text-xl flex space-x-1.5 items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                            <span>Rate:</span>
+                                        </h3>
+                                        <p class="text-4xl font-bold text-center">${Math.round(rate/records.size*100)/100}</p></div>
+                                        <div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">
+                                            <h3 class="text-lg lg:text-xl flex space-x-1.5 items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                                            </svg>
+                                            <span>Records:</span>
+                                        </h3>
+                                        <p class="text-4xl font-bold text-center">${records.size}</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    class="inline-flex justify-center items-center space-x-1.5 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    onclick="exportExcel('${team.id}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 hidden md:block">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>                                                        
+                                    <span>Export</span>
+                                </button>
+                            </div>`;
+                    Object.keys(teamDatasets).forEach((key) => {
+                        const index = data.datasets.findIndex(obj => obj.alias == key);
+                        if(index != -1) {
+                            data.datasets[index].data.push(teamDatasets[key]/records.size);
+                        }
+                    });
                 });
+                console.log(teamDatasets);
                 updateEleHTML("team-index", html);
+                allTeamChart.data = data;
+                allTeamChart.update();
             });
         } else {
             copyHTML("team-index", "noResultScreen");
         }
     });
 }
+
+const perRecordChart = new Chart(document.getElementById('perTeamChart'), {
+    type: 'bar',
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
 
 window.showTeam = (number) => {
     window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordTable');
@@ -348,6 +441,7 @@ window.showTeam = (number) => {
                 updateEleHTML("teamInfo", html);
             }
             getAllRecords(number).then((records) => {
+                console.log(records.size);
                 if(!records.empty) {
                     var htmlCode = "";
                     /*
@@ -402,19 +496,11 @@ window.showTeam = (number) => {
                         
                         i++;
                     });
-                    new Chart(document.getElementById('chart'), {
-                        type: 'bar',
-                        data: data,
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
+                    perRecordChart.data = data;
+                    perRecordChart.update();
                     updateEleHTML("teamRecordTable", htmlCode);
                 } else {
+                    perRecordChart.clear();
                     copyHTML("teamRecordTable", "noResultScreen");
                 }
             });
@@ -422,7 +508,67 @@ window.showTeam = (number) => {
     });
 }
 
-window.search = async () => {
+const flatten = (data) => {
+    const result = {};
+    const isEmpty = (x) => Object.keys(x).length === 0;
+    const recurse = (cur, prop) => {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+            const length = cur.length;
+            for (let i = 0; i < length; i++) {
+                recurse(cur[i], `${prop}[${i}]`);
+            }
+            if (length === 0) {
+                result[prop] = [];
+            }
+        } else {
+            if (!isEmpty(cur)) {
+                Object.keys(cur).forEach((key) =>
+                    recurse(cur[key], prop ? `${key}` : key)
+                );
+            } else {
+                result[prop] = {};
+            }
+        }
+    };
+    recurse(data, "");
+    return result;
+};
+
+window.exportExcel = async (number = null) => {
+
+    const records = await getAllRecords(number);
+
+    const wb = XLSX.utils.book_new();
+    var ws;
+
+    if(number != null) {
+        var new_array = [];
+        records.forEach((record) => {
+            new_array.push(flatten(record.data().parameters));
+        });
+        XLSX.utils.book_append_sheet(wb, ws, `team #${number}`);
+    } else {
+        var new_json = {};
+        records.forEach((record) => {
+            if(record.data().team_number in new_json) {
+                new_json[record.data().team_number].push(flatten(record.data().parameters));
+            } else {
+                new_json[record.data().team_number] = [];
+                new_json[record.data().team_number].push(flatten(record.data().parameters));
+            }
+        });
+        Object.keys(new_json).forEach((teamKey) => {
+            ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
+            XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
+        });
+    }
+    
+    XLSX.writeFile(wb, 'scouting-export.xlsx');
+}
+
+window.searchTeam = async () => {
     const number = await Swal.fire({
         title: 'Enter Team Number',
         input: 'number',
@@ -430,12 +576,12 @@ window.search = async () => {
             autocapitalize: 'off'
         },
         confirmButtonText: 'Search',
+        showCancelButton: true
     }).then((result) => {
         if(result.isConfirmed) {
-            return result.value;
+            showTeam(result.value);
         }
     });
-    showTeam(number);
 }
 
 window.sendPassswordReset = async () => {

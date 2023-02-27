@@ -1,0 +1,45 @@
+[debug] [2023-02-27T02:52:39.009Z] ----------------------------------------------------------------------
+[debug] [2023-02-27T02:52:39.014Z] Command:       /opt/homebrew/Cellar/node/19.6.0/bin/node /opt/homebrew/bin/firebase deploy
+[debug] [2023-02-27T02:52:39.014Z] CLI Version:   11.24.0
+[debug] [2023-02-27T02:52:39.014Z] Platform:      darwin
+[debug] [2023-02-27T02:52:39.014Z] Node Version:  v19.6.0
+[debug] [2023-02-27T02:52:39.014Z] Time:          Mon Feb 27 2023 10:52:39 GMT+0800 (台北標準時間)
+[debug] [2023-02-27T02:52:39.014Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-27T02:52:39.016Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-02-27T02:52:39.061Z] Object ".remoteconfig" in "firebase.json" is missing required property: {"missingProperty":"template"}
+[debug] [2023-02-27T02:52:39.064Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-27T02:52:39.064Z] > authorizing via signed-in user (thoblinoliver@gmail.com)
+[debug] [2023-02-27T02:52:39.064Z] [iam] checking project frc-7589 for permissions ["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2023-02-27T02:52:39.064Z] > refreshing access token with scopes: []
+[debug] [2023-02-27T02:52:39.065Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-02-27T02:52:39.065Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-02-27T02:52:39.317Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-02-27T02:52:39.317Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-02-27T02:52:39.333Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions [none]
+[debug] [2023-02-27T02:52:39.333Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions x-goog-quota-user=projects/frc-7589
+[debug] [2023-02-27T02:52:39.333Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions {"permissions":["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2023-02-27T02:52:39.451Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-02-27T02:52:39.452Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-02-27T02:52:40.293Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions 200
+[debug] [2023-02-27T02:52:40.293Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/frc-7589:testIamPermissions {"permissions":["cloudconfig.configs.get","cloudconfig.configs.update","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2023-02-27T02:52:40.294Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 [none]
+[debug] [2023-02-27T02:52:40.709Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 200
+[debug] [2023-02-27T02:52:40.709Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/frc-7589 {"projectId":"frc-7589","projectNumber":"283240547457","displayName":"frc-7589","name":"projects/frc-7589","resources":{"hostingSite":"frc-7589","realtimeDatabaseInstance":"frc-7589-default-rtdb","storageBucket":"frc-7589.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_86eef601-ff5d-482b-83f1-d6b6ab386a21"}
+[info] 
+[info] === Deploying to 'frc-7589'...
+[info] 
+[info] i  deploying storage, firestore, hosting, remoteconfig 
+[debug] [2023-02-27T02:52:40.712Z] >>> [apiv2][query] GET https://appengine.googleapis.com/v1/apps/frc-7589 [none]
+[debug] [2023-02-27T02:52:41.115Z] <<< [apiv2][status] GET https://appengine.googleapis.com/v1/apps/frc-7589 200
+[debug] [2023-02-27T02:52:41.116Z] <<< [apiv2][body] GET https://appengine.googleapis.com/v1/apps/frc-7589 {"name":"apps/frc-7589","id":"frc-7589","authDomain":"gmail.com","locationId":"us-central","codeBucket":"staging.frc-7589.appspot.com","servingStatus":"SERVING","defaultHostname":"frc-7589.uc.r.appspot.com","defaultBucket":"frc-7589.appspot.com","serviceAccount":"frc-7589@appspot.gserviceaccount.com","gcrDomain":"us.gcr.io","databaseType":"CLOUD_FIRESTORE","featureSettings":{"splitHealthChecks":true,"useContainerOptimizedOs":true}}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2023-02-27T02:52:41.118Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [none]
+[debug] [2023-02-27T02:52:41.118Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [omitted]
+[debug] [2023-02-27T02:52:42.192Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test 200
+[debug] [2023-02-27T02:52:42.192Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test {}
+[info] ✔  firebase.storage: rules file storage.rules compiled successfully 
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2023-02-27T02:52:42.195Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [none]
+[debug] [2023-02-27T02:52:42.195Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/frc-7589:test [omitted]

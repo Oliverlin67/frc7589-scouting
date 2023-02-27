@@ -34976,32 +34976,29 @@ window._uuid = function () {
   });
 };
 var last_page;
-window.isOnline = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-  return _regeneratorRuntime().wrap(function _callee$(_context) {
-    while (1) switch (_context.prev = _context.next) {
-      case 0:
-        if (!('onLine' in navigator)) {
-          _context.next = 5;
-          break;
+window.isOnline = function () {
+  if ('onLine' in navigator) {
+    console.log(navigator.onLine);
+    return navigator.onLine;
+  } else {
+    console.log("trying");
+    _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            return _context.abrupt("return", axios.get('https://www.google.com').then(function () {
+              return true;
+            })["catch"](function (e) {
+              return false;
+            }));
+          case 1:
+          case "end":
+            return _context.stop();
         }
-        console.log(navigator.onLine);
-        return _context.abrupt("return", navigator.onLine);
-      case 5:
-        console.log("trying");
-        _context.next = 8;
-        return axios.get('https://www.google.com').then(function () {
-          return true;
-        })["catch"](function (e) {
-          return false;
-        });
-      case 8:
-        return _context.abrupt("return", _context.sent);
-      case 9:
-      case "end":
-        return _context.stop();
-    }
-  }, _callee);
-}));
+      }, _callee);
+    }))();
+  }
+};
 window.updateEleText = function (id, text) {
   window.document.getElementById(id).innerText = text;
 };
@@ -35059,11 +35056,11 @@ function signIn(_x, _x2) {
   return _signIn.apply(this, arguments);
 }
 function _signIn() {
-  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(email, password) {
-    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
+  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17(email, password) {
+    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+      while (1) switch (_context17.prev = _context17.next) {
         case 0:
-          _context15.next = 2;
+          _context17.next = 2;
           return (0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.signInWithEmailAndPassword)(auth, email, password).then(function (user) {
             return true;
           })["catch"](function (err) {
@@ -35071,12 +35068,12 @@ function _signIn() {
             var errorMessage = err.message;
           });
         case 2:
-          return _context15.abrupt("return", _context15.sent);
+          return _context17.abrupt("return", _context17.sent);
         case 3:
         case "end":
-          return _context15.stop();
+          return _context17.stop();
       }
-    }, _callee15);
+    }, _callee17);
   }));
   return _signIn.apply(this, arguments);
 }
@@ -35084,13 +35081,13 @@ function changeDBMode(_x3) {
   return _changeDBMode.apply(this, arguments);
 }
 function _changeDBMode() {
-  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(online) {
+  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(online) {
     var silent,
-      _args16 = arguments;
-    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-      while (1) switch (_context16.prev = _context16.next) {
+      _args18 = arguments;
+    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+      while (1) switch (_context18.prev = _context18.next) {
         case 0:
-          silent = _args16.length > 1 && _args16[1] !== undefined ? _args16[1] : false;
+          silent = _args18.length > 1 && _args18[1] !== undefined ? _args18[1] : false;
           if (online) {
             (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.enableNetwork)(db).then(function () {
               if (!silent) showMessage("mode: ONLINE");
@@ -35102,9 +35099,9 @@ function _changeDBMode() {
           }
         case 2:
         case "end":
-          return _context16.stop();
+          return _context18.stop();
       }
-    }, _callee16);
+    }, _callee18);
   }));
   return _changeDBMode.apply(this, arguments);
 }
@@ -35112,32 +35109,32 @@ function getAllRecords() {
   return _getAllRecords.apply(this, arguments);
 }
 function _getAllRecords() {
-  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
+  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
     var number,
-      _args17 = arguments;
-    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-      while (1) switch (_context17.prev = _context17.next) {
+      _args19 = arguments;
+    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+      while (1) switch (_context19.prev = _context19.next) {
         case 0:
-          number = _args17.length > 0 && _args17[0] !== undefined ? _args17[0] : null;
+          number = _args19.length > 0 && _args19[0] !== undefined ? _args19[0] : null;
           showMessage("Fetching records...");
           if (!(number != null)) {
-            _context17.next = 8;
+            _context19.next = 8;
             break;
           }
-          _context17.next = 5;
+          _context19.next = 5;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"), (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.where)("team_number", "==", number)));
         case 5:
-          return _context17.abrupt("return", _context17.sent);
+          return _context19.abrupt("return", _context19.sent);
         case 8:
-          _context17.next = 10;
+          _context19.next = 10;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"));
         case 10:
-          return _context17.abrupt("return", _context17.sent);
+          return _context19.abrupt("return", _context19.sent);
         case 11:
         case "end":
-          return _context17.stop();
+          return _context19.stop();
       }
-    }, _callee17);
+    }, _callee19);
   }));
   return _getAllRecords.apply(this, arguments);
 }
@@ -35145,43 +35142,43 @@ function getTeams() {
   return _getTeams.apply(this, arguments);
 }
 function _getTeams() {
-  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
+  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
     var number,
       docSnap,
-      _args18 = arguments;
-    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-      while (1) switch (_context18.prev = _context18.next) {
+      _args20 = arguments;
+    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+      while (1) switch (_context20.prev = _context20.next) {
         case 0:
-          number = _args18.length > 0 && _args18[0] !== undefined ? _args18[0] : null;
+          number = _args20.length > 0 && _args20[0] !== undefined ? _args20[0] : null;
           showMessage("Fetching teams...");
           if (!(number != null)) {
-            _context18.next = 13;
+            _context20.next = 13;
             break;
           }
-          _context18.next = 5;
+          _context20.next = 5;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", number));
         case 5:
-          docSnap = _context18.sent;
+          docSnap = _context20.sent;
           if (!docSnap.exists()) {
-            _context18.next = 10;
+            _context20.next = 10;
             break;
           }
-          return _context18.abrupt("return", docSnap);
+          return _context20.abrupt("return", docSnap);
         case 10:
           showMessage("Team no found");
         case 11:
-          _context18.next = 16;
+          _context20.next = 16;
           break;
         case 13:
-          _context18.next = 15;
+          _context20.next = 15;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "teams"));
         case 15:
-          return _context18.abrupt("return", _context18.sent);
+          return _context20.abrupt("return", _context20.sent);
         case 16:
         case "end":
-          return _context18.stop();
+          return _context20.stop();
       }
-    }, _callee18);
+    }, _callee20);
   }));
   return _getTeams.apply(this, arguments);
 }
@@ -35189,18 +35186,19 @@ function storeTeam(_x4, _x5) {
   return _storeTeam.apply(this, arguments);
 }
 function _storeTeam() {
-  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(key, data) {
+  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(key, data) {
     var silent,
       online,
-      _args19 = arguments;
-    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-      while (1) switch (_context19.prev = _context19.next) {
+      _args21 = arguments;
+    return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+      while (1) switch (_context21.prev = _context21.next) {
         case 0:
-          silent = _args19.length > 2 && _args19[2] !== undefined ? _args19[2] : false;
-          _context19.next = 3;
+          silent = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : false;
+          _context21.next = 3;
           return isOnline();
         case 3:
-          online = _context19.sent;
+          online = _context21.sent;
+          if (!online) getTeamIndex();
           (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", key), data, {
             merge: true
           }).then(function () {
@@ -35208,11 +35206,11 @@ function _storeTeam() {
           })["catch"](function (error) {
             showMessage("FAILED to store team(".concat(error, ")"), true, 'error');
           });
-        case 5:
+        case 6:
         case "end":
-          return _context19.stop();
+          return _context21.stop();
       }
-    }, _callee19);
+    }, _callee21);
   }));
   return _storeTeam.apply(this, arguments);
 }
@@ -35221,18 +35219,18 @@ function storeRecord(_x6, _x7) {
 } // ----------------
 // Utils
 function _storeRecord() {
-  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20(key, data) {
+  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(key, data) {
     var silent,
       online,
-      _args20 = arguments;
-    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-      while (1) switch (_context20.prev = _context20.next) {
+      _args22 = arguments;
+    return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+      while (1) switch (_context22.prev = _context22.next) {
         case 0:
-          silent = _args20.length > 2 && _args20[2] !== undefined ? _args20[2] : false;
-          _context20.next = 3;
+          silent = _args22.length > 2 && _args22[2] !== undefined ? _args22[2] : false;
+          _context22.next = 3;
           return isOnline();
         case 3:
-          online = _context20.sent;
+          online = _context22.sent;
           showMessage("Saving record...");
           if (!online) showTeam(data.team_number);
           (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key), data).then(function () {
@@ -35243,9 +35241,9 @@ function _storeRecord() {
           });
         case 7:
         case "end":
-          return _context20.stop();
+          return _context22.stop();
       }
-    }, _callee20);
+    }, _callee22);
   }));
   return _storeRecord.apply(this, arguments);
 }
@@ -35285,7 +35283,7 @@ window.getTeamIndex = function () {
                     var recordData = record.data();
                     rate += getRate(recordData.parameters);
                   });
-                  html += '<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam(\'' + team.id + '\')">' + '<div><h1 class="text-xl xl:text-2xl">Team #' + teamData.info.team_number + '</h1><h2 class="xl:text-lg">' + teamData.info.nickname + '</h2></div>' + '<div class="flex items-center justify-between space-x-2"><div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4">' + '<h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg><span>Rate:</span></h3>' + '<p class="text-4xl font-bold text-center">' + Math.round(rate / records.size * 100) / 100 + '</p></div>' + '<div class="flex-1 bg-blue-200 rounded-lg flex flex-col p-4"><h3 class="text-lg lg:text-xl flex space-x-1.5 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg><span>Records:</span></h3>' + '<p class="text-4xl font-bold text-center">' + records.size + '</p></div></div></div>';
+                  html += "<div class=\"bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3\" onclick=\"showTeam('".concat(team.id, "')\">\n                                <div>\n                                    <h1 class=\"text-xl xl:text-2xl\">Team #").concat(teamData.info.team_number, "</h1>\n                                    <h2 class=\"xl:text-lg\">").concat(teamData.info.nickname, "</h2>\n                                </div>\n                                <div class=\"flex items-center justify-between space-x-2\">\n                                    <div class=\"flex-1 bg-blue-200 rounded-lg flex flex-col p-4\">\n                                        <h3 class=\"text-lg lg:text-xl flex space-x-1.5 items-center\">\n                                            <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\">\n                                                <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z\" />\n                                            </svg>\n                                            <span>Rate:</span>\n                                        </h3>\n                                        <p class=\"text-4xl font-bold text-center\">").concat(Math.round(rate / records.size * 100) / 100, "</p></div>\n                                        <div class=\"flex-1 bg-blue-200 rounded-lg flex flex-col p-4\">\n                                            <h3 class=\"text-lg lg:text-xl flex space-x-1.5 items-center\">\n                                            <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\">\n                                                <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z\" />\n                                            </svg>\n                                            <span>Records:</span>\n                                        </h3>\n                                        <p class=\"text-4xl font-bold text-center\">").concat(records.size, "</p>\n                                    </div>\n                                </div>\n                            </div>");
                 });
               case 4:
                 updateEleHTML("team-index", html);
@@ -35550,7 +35548,8 @@ window.userLogin = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRunt
 }));
 window.addTeam = function () {
   Swal.fire({
-    title: 'Enter Team Number',
+    title: 'Add Team',
+    text: 'enter team number',
     input: 'number',
     inputAttributes: {
       autocapitalize: 'off'
@@ -35687,7 +35686,8 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
         }
         _context9.next = 4;
         return Swal.fire({
-          title: 'Enter Team Number',
+          title: 'Start Record',
+          text: 'enter team number',
           input: 'number',
           inputAttributes: {
             autocapitalize: 'off'
@@ -35781,10 +35781,10 @@ window.addTeamViaTBA = function () {
     });
     return;
   }
-  _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+  _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
     var inputOptions;
-    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-      while (1) switch (_context12.prev = _context12.next) {
+    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
         case 0:
           inputOptions = axios.get("https://www.thebluealliance.com/api/v3/team/frc7589/events/keys", {
             headers: {
@@ -35837,111 +35837,132 @@ window.addTeamViaTBA = function () {
                 showCancelButton: true,
                 confirmButtonText: 'Add',
                 showLoaderOnConfirm: true,
+                preConfirm: function () {
+                  var _preConfirm3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+                    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+                      while (1) switch (_context12.prev = _context12.next) {
+                        case 0:
+                          _context12.next = 2;
+                          return result.value.forEach( /*#__PURE__*/function () {
+                            var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(team) {
+                              var info, awards, data;
+                              return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+                                while (1) switch (_context11.prev = _context11.next) {
+                                  case 0:
+                                    _context11.next = 2;
+                                    return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team), {
+                                      headers: {
+                                        "accept": "application/json",
+                                        "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
+                                      }
+                                    }).then(function (res) {
+                                      console.table(res.data);
+                                      if (res.status == 200) {
+                                        return res.data;
+                                      }
+                                      return [];
+                                    })["catch"](function (error) {
+                                      console.log(error);
+                                      return [];
+                                    });
+                                  case 2:
+                                    info = _context11.sent;
+                                    _context11.next = 5;
+                                    return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team, "/awards"), {
+                                      headers: {
+                                        "accept": "application/json",
+                                        "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
+                                      }
+                                    }).then(function (res) {
+                                      console.table(res.data);
+                                      if (res.status == 200) {
+                                        return res.data;
+                                      }
+                                      return [];
+                                    })["catch"](function (error) {
+                                      console.log(error);
+                                      return [];
+                                    });
+                                  case 5:
+                                    awards = _context11.sent;
+                                    data = {
+                                      info: info,
+                                      awards: awards
+                                    };
+                                    console.log(data);
+                                    storeTeam(info.team_number.toString(), data, true);
+                                  case 9:
+                                  case "end":
+                                    return _context11.stop();
+                                }
+                              }, _callee11);
+                            }));
+                            return function (_x11) {
+                              return _ref10.apply(this, arguments);
+                            };
+                          }());
+                        case 2:
+                          return _context12.abrupt("return", true);
+                        case 3:
+                        case "end":
+                          return _context12.stop();
+                      }
+                    }, _callee12);
+                  }));
+                  function preConfirm() {
+                    return _preConfirm3.apply(this, arguments);
+                  }
+                  return preConfirm;
+                }(),
                 allowOutsideClick: function allowOutsideClick() {
                   return !Swal.isLoading();
-                },
-                preConfirm: function preConfirm() {
-                  result.value.forEach(function (team) {
-                    _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-                      var info, awards, data;
-                      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-                        while (1) switch (_context11.prev = _context11.next) {
-                          case 0:
-                            _context11.next = 2;
-                            return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team), {
-                              headers: {
-                                "accept": "application/json",
-                                "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
-                              }
-                            }).then(function (res) {
-                              console.table(res.data);
-                              if (res.status == 200) {
-                                return res.data;
-                              }
-                              return [];
-                            })["catch"](function (error) {
-                              console.log(error);
-                              return [];
-                            });
-                          case 2:
-                            info = _context11.sent;
-                            _context11.next = 5;
-                            return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team, "/awards"), {
-                              headers: {
-                                "accept": "application/json",
-                                "X-TBA-Auth-Key": (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "tba_key").asString()
-                              }
-                            }).then(function (res) {
-                              console.table(res.data);
-                              if (res.status == 200) {
-                                return res.data;
-                              }
-                              return [];
-                            })["catch"](function (error) {
-                              console.log(error);
-                              return [];
-                            });
-                          case 5:
-                            awards = _context11.sent;
-                            data = {
-                              info: info,
-                              awards: awards
-                            };
-                            console.log(data);
-                            storeTeam(info.team_number.toString(), data);
-                          case 9:
-                          case "end":
-                            return _context11.stop();
-                        }
-                      }, _callee11);
-                    }))();
-                  });
-                  getTeamIndex();
                 }
+              }).then(function (result) {
+                if (result.isConfirmed) getTeamIndex();
               });
             }
           });
         case 2:
         case "end":
-          return _context12.stop();
+          return _context13.stop();
       }
-    }, _callee12);
+    }, _callee13);
   }))();
 };
-window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
   var number;
-  return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-    while (1) switch (_context13.prev = _context13.next) {
+  return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+    while (1) switch (_context14.prev = _context14.next) {
       case 0:
-        _context13.next = 2;
+        _context14.next = 2;
         return Swal.fire({
           title: 'Enter Team Number',
           input: 'number',
           inputAttributes: {
             autocapitalize: 'off'
           },
-          confirmButtonText: 'Search'
+          confirmButtonText: 'Search',
+          showCancelButton: true
         }).then(function (result) {
           if (result.isConfirmed) {
-            return result.value;
+            showTeam(result.value);
           }
         });
       case 2:
-        number = _context13.sent;
-        showTeam(number);
-      case 4:
+        number = _context14.sent;
+      case 3:
       case "end":
-        return _context13.stop();
+        return _context14.stop();
     }
-  }, _callee13);
+  }, _callee14);
 }));
 
 // Event Listener
 
 window.addEventListener('load', /*#__PURE__*/function () {
-  var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(event) {
-    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-      while (1) switch (_context14.prev = _context14.next) {
+  var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(event) {
+    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
         case 0:
           if ('onLine' in window.navigator) {
             changeDBMode(window.navigator.onLine, true);
@@ -35951,11 +35972,11 @@ window.addEventListener('load', /*#__PURE__*/function () {
           }
         case 1:
         case "end":
-          return _context14.stop();
+          return _context15.stop();
       }
-    }, _callee14);
+    }, _callee15);
   }));
-  return function (_x11) {
+  return function (_x12) {
     return _ref12.apply(this, arguments);
   };
 }());
@@ -35966,14 +35987,39 @@ window.addEventListener('online', function () {
   changeDBMode(true);
   fetchSettings();
 });
-(0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.onAuthStateChanged)(auth, function (user) {
-  if (user) {
-    var uid = user.uid;
-    getTeamIndex();
-  } else {
-    userLogin();
-  }
-});
+(0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.onAuthStateChanged)(auth, /*#__PURE__*/function () {
+  var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(user) {
+    var uid;
+    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+      while (1) switch (_context16.prev = _context16.next) {
+        case 0:
+          if (!user) {
+            _context16.next = 5;
+            break;
+          }
+          uid = user.uid;
+          getTeamIndex();
+          _context16.next = 9;
+          break;
+        case 5:
+          _context16.next = 7;
+          return userLogin();
+        case 7:
+          if (!_context16.sent) {
+            _context16.next = 9;
+            break;
+          }
+          getTeamIndex();
+        case 9:
+        case "end":
+          return _context16.stop();
+      }
+    }, _callee16);
+  }));
+  return function (_x13) {
+    return _ref13.apply(this, arguments);
+  };
+}());
 document.getElementById('teamContainer').addEventListener('click', function (e) {
   if (e.target.classList.contains('tab-button')) {
     if (document.getElementById('teamContainer').getAttribute('current') != e.target.getAttribute('page')) {
