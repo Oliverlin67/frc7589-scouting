@@ -35748,8 +35748,10 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
           text: 'enter team numbers(separate by comma)',
           input: 'text',
           inputAttributes: {
-            autocapitalize: 'off'
+            autocapitalize: 'off',
+            pattern: '^[0-9]{1,}(?:,[0-9]{1,})*$'
           },
+          validationMessage: 'Please enter valid team numbers(Check if you leave blank there or use ZH comma)',
           confirmButtonText: 'Start'
         }).then(function (result) {
           if (result.isConfirmed) {
