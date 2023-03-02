@@ -35000,18 +35000,18 @@ window.isOnline = function () {
   }
 };
 window.updateEleText = function (id, text) {
-  window.document.getElementById(id).innerText = text;
+  document.getElementById(id).innerText = text;
 };
 window.updateEleHTML = function (id, html) {
-  window.document.getElementById(id).innerHTML = html;
+  document.getElementById(id).innerHTML = html;
 };
 window.showPage = function (name) {
-  if (last_page != name) window.document.getElementById(name).classList.replace("hidden", "box");
-  if (last_page != null && last_page != name) window.document.getElementById(last_page).classList.replace("box", "hidden");
+  if (last_page != name) document.getElementById(name).classList.replace("hidden", "box");
+  if (last_page != null && last_page != name) document.getElementById(last_page).classList.replace("box", "hidden");
   last_page = name;
 };
 window.copyHTML = function (target, source) {
-  window.document.getElementById(target).innerHTML = window.document.getElementById(source).innerHTML;
+  document.getElementById(target).innerHTML = document.getElementById(source).innerHTML;
 };
 
 // Firebase
@@ -35056,11 +35056,11 @@ function signIn(_x, _x2) {
   return _signIn.apply(this, arguments);
 }
 function _signIn() {
-  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17(email, password) {
-    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-      while (1) switch (_context17.prev = _context17.next) {
+  _signIn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(email, password) {
+    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+      while (1) switch (_context18.prev = _context18.next) {
         case 0:
-          _context17.next = 2;
+          _context18.next = 2;
           return (0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.signInWithEmailAndPassword)(auth, email, password).then(function (user) {
             return true;
           })["catch"](function (err) {
@@ -35068,12 +35068,12 @@ function _signIn() {
             var errorMessage = err.message;
           });
         case 2:
-          return _context17.abrupt("return", _context17.sent);
+          return _context18.abrupt("return", _context18.sent);
         case 3:
         case "end":
-          return _context17.stop();
+          return _context18.stop();
       }
-    }, _callee17);
+    }, _callee18);
   }));
   return _signIn.apply(this, arguments);
 }
@@ -35081,13 +35081,13 @@ function changeDBMode(_x3) {
   return _changeDBMode.apply(this, arguments);
 }
 function _changeDBMode() {
-  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(online) {
+  _changeDBMode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(online) {
     var silent,
-      _args18 = arguments;
-    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-      while (1) switch (_context18.prev = _context18.next) {
+      _args19 = arguments;
+    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+      while (1) switch (_context19.prev = _context19.next) {
         case 0:
-          silent = _args18.length > 1 && _args18[1] !== undefined ? _args18[1] : false;
+          silent = _args19.length > 1 && _args19[1] !== undefined ? _args19[1] : false;
           if (online) {
             (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.enableNetwork)(db).then(function () {
               if (!silent) showMessage("mode: ONLINE");
@@ -35099,9 +35099,9 @@ function _changeDBMode() {
           }
         case 2:
         case "end":
-          return _context18.stop();
+          return _context19.stop();
       }
-    }, _callee18);
+    }, _callee19);
   }));
   return _changeDBMode.apply(this, arguments);
 }
@@ -35109,117 +35109,113 @@ function getAllRecords() {
   return _getAllRecords.apply(this, arguments);
 }
 function _getAllRecords() {
-  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
+  _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
     var number,
-      _args19 = arguments;
-    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-      while (1) switch (_context19.prev = _context19.next) {
-        case 0:
-          number = _args19.length > 0 && _args19[0] !== undefined ? _args19[0] : null;
-          showMessage("Fetching records...");
-          if (!(number != null)) {
-            _context19.next = 8;
-            break;
-          }
-          _context19.next = 5;
-          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"), (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.where)("team_number", "==", number)));
-        case 5:
-          return _context19.abrupt("return", _context19.sent);
-        case 8:
-          _context19.next = 10;
-          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"));
-        case 10:
-          return _context19.abrupt("return", _context19.sent);
-        case 11:
-        case "end":
-          return _context19.stop();
-      }
-    }, _callee19);
-  }));
-  return _getAllRecords.apply(this, arguments);
-}
-function getTeams() {
-  return _getTeams.apply(this, arguments);
-}
-function _getTeams() {
-  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
-    var number,
-      docSnap,
       _args20 = arguments;
     return _regeneratorRuntime().wrap(function _callee20$(_context20) {
       while (1) switch (_context20.prev = _context20.next) {
         case 0:
           number = _args20.length > 0 && _args20[0] !== undefined ? _args20[0] : null;
-          showMessage("Fetching teams...");
+          showMessage("Fetching records...");
           if (!(number != null)) {
-            _context20.next = 13;
+            _context20.next = 8;
             break;
           }
           _context20.next = 5;
-          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", number));
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.query)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"), (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.where)("team_number", "==", number)));
         case 5:
-          docSnap = _context20.sent;
-          if (!docSnap.exists()) {
-            _context20.next = 10;
-            break;
-          }
-          return _context20.abrupt("return", docSnap);
-        case 10:
-          showMessage("Team no found");
-        case 11:
-          _context20.next = 16;
-          break;
-        case 13:
-          _context20.next = 15;
-          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "teams"));
-        case 15:
           return _context20.abrupt("return", _context20.sent);
-        case 16:
+        case 8:
+          _context20.next = 10;
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "records"));
+        case 10:
+          return _context20.abrupt("return", _context20.sent);
+        case 11:
         case "end":
           return _context20.stop();
       }
     }, _callee20);
   }));
+  return _getAllRecords.apply(this, arguments);
+}
+window.getRecord = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(uuid) {
+    var docSnap;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          showMessage("Fetching record...");
+          _context2.next = 3;
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", uuid));
+        case 3:
+          docSnap = _context2.sent;
+          if (!docSnap.exists()) {
+            _context2.next = 8;
+            break;
+          }
+          return _context2.abrupt("return", docSnap);
+        case 8:
+          showMessage("Record no found");
+        case 9:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return function (_x4) {
+    return _ref2.apply(this, arguments);
+  };
+}();
+function getTeams() {
   return _getTeams.apply(this, arguments);
 }
-function storeTeam(_x4, _x5) {
-  return _storeTeam.apply(this, arguments);
-}
-function _storeTeam() {
-  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(key, data) {
-    var silent,
-      online,
+function _getTeams() {
+  _getTeams = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
+    var number,
+      docSnap,
       _args21 = arguments;
     return _regeneratorRuntime().wrap(function _callee21$(_context21) {
       while (1) switch (_context21.prev = _context21.next) {
         case 0:
-          silent = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : false;
-          _context21.next = 3;
-          return isOnline();
-        case 3:
-          online = _context21.sent;
-          if (!online) getTeamIndex();
-          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", key), data, {
-            merge: true
-          }).then(function () {
-            if (!silent) showMessage("Team successfully store!");
-          })["catch"](function (error) {
-            showMessage("FAILED to store team(".concat(error, ")"), true, 'error');
-          });
-        case 6:
+          number = _args21.length > 0 && _args21[0] !== undefined ? _args21[0] : null;
+          showMessage("Fetching teams...");
+          if (!(number != null)) {
+            _context21.next = 14;
+            break;
+          }
+          _context21.next = 5;
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", number));
+        case 5:
+          docSnap = _context21.sent;
+          if (!docSnap.exists()) {
+            _context21.next = 10;
+            break;
+          }
+          return _context21.abrupt("return", docSnap);
+        case 10:
+          showMessage("Team no found");
+          return _context21.abrupt("return", null);
+        case 12:
+          _context21.next = 17;
+          break;
+        case 14:
+          _context21.next = 16;
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.collection)(db, "teams"));
+        case 16:
+          return _context21.abrupt("return", _context21.sent);
+        case 17:
         case "end":
           return _context21.stop();
       }
     }, _callee21);
   }));
+  return _getTeams.apply(this, arguments);
+}
+function storeTeam(_x5, _x6) {
   return _storeTeam.apply(this, arguments);
 }
-function storeRecord(_x6, _x7) {
-  return _storeRecord.apply(this, arguments);
-} // ----------------
-// Utils
-function _storeRecord() {
-  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(key, data) {
+function _storeTeam() {
+  _storeTeam = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(key, data) {
     var silent,
       online,
       _args22 = arguments;
@@ -35231,9 +35227,44 @@ function _storeRecord() {
           return isOnline();
         case 3:
           online = _context22.sent;
+          if (!online) getTeamIndex();
+          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "teams", key), data, {
+            merge: true
+          }).then(function () {
+            if (!silent) showMessage("Team successfully store!");
+          })["catch"](function (error) {
+            showMessage("FAILED to store team(".concat(error, ")"), true, 'error');
+          });
+        case 6:
+        case "end":
+          return _context22.stop();
+      }
+    }, _callee22);
+  }));
+  return _storeTeam.apply(this, arguments);
+}
+function storeRecord(_x7, _x8) {
+  return _storeRecord.apply(this, arguments);
+} // ----------------
+// Utils
+function _storeRecord() {
+  _storeRecord = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23(key, data) {
+    var silent,
+      online,
+      _args23 = arguments;
+    return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+      while (1) switch (_context23.prev = _context23.next) {
+        case 0:
+          silent = _args23.length > 2 && _args23[2] !== undefined ? _args23[2] : false;
+          _context23.next = 3;
+          return isOnline();
+        case 3:
+          online = _context23.sent;
           showMessage("Saving record...");
           if (!online) showTeam(data.team_number);
-          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key), data).then(function () {
+          (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.setDoc)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(db, "records", key), data, {
+            merge: true
+          }).then(function () {
             if (!silent) showMessage("Record successfully store!");
             if (online) showTeam(data.team_number);
           })["catch"](function (error) {
@@ -35241,9 +35272,9 @@ function _storeRecord() {
           });
         case 7:
         case "end":
-          return _context22.stop();
+          return _context23.stop();
       }
-    }, _callee22);
+    }, _callee23);
   }));
   return _storeRecord.apply(this, arguments);
 }
@@ -35251,8 +35282,19 @@ window.getRate = function (data) {
   var formula = (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "formula").asString();
   var parameters = JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString());
   parameters.forEach(function (parameter) {
-    formula = formula.replace(parameter.alias, data[parameter.alias]);
+    try {
+      if (typeof data[parameter.alias] === "boolean") {
+        formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+      } else if (data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
+        formula = formula.replace(parameter.alias, data[parameter.alias]);
+      } else {
+        formula = formula.replace(parameter.alias, "1");
+      }
+    } catch (e) {
+      formula = formula.replace(parameter.alias, "1");
+    }
   });
+  console.log(formula);
   return eval(formula);
 };
 
@@ -35264,20 +35306,20 @@ window.getTeamIndex = function () {
   copyHTML("team-index", "loadingScreen");
   showPage("teamIndexScreen");
   if (tba_available()) {
-    window.document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
+    document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
   }
   getTeams().then(function (teams) {
     if (!teams.empty) {
       var html = "";
       teams.forEach( /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(team) {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(team) {
           var teamData, rate;
-          return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-            while (1) switch (_context2.prev = _context2.next) {
+          return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+            while (1) switch (_context3.prev = _context3.next) {
               case 0:
                 teamData = team.data();
                 rate = 0;
-                _context2.next = 4;
+                _context3.next = 4;
                 return getAllRecords(team.id).then(function (records) {
                   records.forEach(function (record) {
                     var recordData = record.data();
@@ -35289,12 +35331,12 @@ window.getTeamIndex = function () {
                 updateEleHTML("team-index", html);
               case 5:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
-          }, _callee2);
+          }, _callee3);
         }));
-        return function (_x8) {
-          return _ref2.apply(this, arguments);
+        return function (_x9) {
+          return _ref3.apply(this, arguments);
         };
       }());
     } else {
@@ -35303,19 +35345,19 @@ window.getTeamIndex = function () {
   });
 };
 window.showTeam = function (number) {
-  window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
-  window.document.getElementById('teamRecordList').classList.remove('hidden');
-  window.document.getElementById('teamInfo').classList.add('hidden');
-  window.document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
-  window.document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
+  document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
+  document.getElementById('teamRecordList').classList.remove('hidden');
+  document.getElementById('teamInfo').classList.add('hidden');
+  document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
+  document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
   getTeams(number).then(function (team) {
-    _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
       var teamData, info, awards, html;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
             if (team.empty) {
-              _context3.next = 23;
+              _context4.next = 23;
               break;
             }
             teamData = team.data();
@@ -35324,16 +35366,16 @@ window.showTeam = function (number) {
             updateEleText("teamID", teamData.info.team_number);
             updateEleText("teamName", teamData.info.nickname);
             updateEleText("teamRookieYear", teamData.info.rookie_year);
-            window.document.getElementById('recordCreateBtn').setAttribute('onclick', "recordCreate(".concat(number, ")"));
+            document.getElementById('recordCreateBtn').setAttribute('onclick', "recordCreate(".concat(number, ")"));
             if (!('onLine' in navigator && teamData.offline)) {
-              _context3.next = 17;
+              _context4.next = 17;
               break;
             }
             if (!navigator.onLine) {
-              _context3.next = 17;
+              _context4.next = 17;
               break;
             }
-            _context3.next = 12;
+            _context4.next = 12;
             return axios.get("https://www.thebluealliance.com/api/v3/team/frc".concat(number), {
               headers: {
                 "accept": "application/json",
@@ -35347,8 +35389,8 @@ window.showTeam = function (number) {
               showMessage("FAILED to fetch team info", true, 'warning');
             });
           case 12:
-            info = _context3.sent;
-            _context3.next = 15;
+            info = _context4.sent;
+            _context4.next = 15;
             return axios.get("https://www.thebluealliance.com/api/v3/team/frc".concat(number, "/awards"), {
               headers: {
                 "accept": "application/json",
@@ -35362,7 +35404,7 @@ window.showTeam = function (number) {
               showMessage("FAILED to fetch team info", true, 'warning');
             });
           case 15:
-            awards = _context3.sent;
+            awards = _context4.sent;
             storeTeam(number, {
               info: info,
               awards: awards,
@@ -35401,7 +35443,7 @@ window.showTeam = function (number) {
                 var htmlCode = "";
                 records.forEach(function (record) {
                   var record_data = record.data();
-                  htmlCode += "<div class=\"bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative\">\n                            <button class=\"w-5 h-5 absolute top-2 right-2\" onclick=\"deleteRecord('".concat(record.id, "', '").concat(number, "')\">\n                                <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-5 h-5\">\n                                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0\" />\n                                </svg>\n                            </button>\n                            <div>\n                                <h1 class=\"text-lg flex items-center space-x-1\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184\" />\n                                    </svg>\n                                    <span>").concat(record.id, "</span>\n                                </h1>\n                                <h2 class=\"text-sm flex items-center space-x-1\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-4 h-4\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z\" />\n                                    </svg>\n                                    <span>").concat(moment(new Date(record_data.timestamp.seconds * 1000)).format('YYYY/MM/DD, HH:mm:ss'), "</span>\n                                </h2>\n                            </div>\n                            <div class=\"prose w-full\">\n                                <ul>");
+                  htmlCode += "<div class=\"bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative\">\n                            <div class=\"absolute top-2 right-2 flex items-center space-x-2\">\n                                <button class=\"w-5 h-5\" onclick=\"deleteRecord('".concat(record.id, "', '").concat(number, "')\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-5 h-5\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0\" />\n                                    </svg>\n                                </button>\n                                <button class=\"w-5 h-5\" onclick=\"recordCreate('").concat(number, "', '").concat(record.id, "')\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-5 h-5\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125\" />\n                                    </svg>\n                                </button>\n                            </div>\n                            <div>\n                                <h1 class=\"text-lg flex items-center space-x-1\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184\" />\n                                    </svg>\n                                    <span>").concat(record.id, "</span>\n                                </h1>\n                                <h2 class=\"text-sm flex items-center space-x-1\">\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-4 h-4\">\n                                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z\" />\n                                    </svg>\n                                    <span>").concat(moment(new Date(record_data.timestamp.seconds * 1000)).format('YYYY/MM/DD, HH:mm:ss'), "</span>\n                                </h2>\n                            </div>\n                            <div class=\"prose w-full\">\n                                <ul>");
                   Object.keys(record_data.parameters).forEach(function (key) {
                     htmlCode += "<li class=\"text-blue-800 space-x-1\">".concat(key, ":<span class=\"font-bold\">").concat(record_data.parameters[key], "</span></li>");
                   });
@@ -35414,17 +35456,17 @@ window.showTeam = function (number) {
             });
           case 24:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
-      }, _callee3);
+      }, _callee4);
     }))();
   });
 };
-window.sendPassswordReset = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-  return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-    while (1) switch (_context5.prev = _context5.next) {
+window.sendPassswordReset = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+  return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+    while (1) switch (_context6.prev = _context6.next) {
       case 0:
-        _context5.next = 2;
+        _context6.next = 2;
         return Swal.fire({
           title: 'Forgot Password',
           html: "<input type=\"text\" id=\"email\" class=\"swal2-input w-7/8\" placeholder=\"Email\">\n        <button class=\"text-blue-700 mt-4 text-sm\" onclick=\"userLogin()\">Login?</button>",
@@ -35432,16 +35474,16 @@ window.sendPassswordReset = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regene
           focusConfirm: false,
           showLoaderOnConfirm: true,
           preConfirm: function () {
-            var _preConfirm = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+            var _preConfirm = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
               var email;
-              return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-                while (1) switch (_context4.prev = _context4.next) {
+              return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                while (1) switch (_context5.prev = _context5.next) {
                   case 0:
                     email = Swal.getPopup().querySelector('#email').value;
                     if (!email) {
                       Swal.showValidationMessage("Please enter your email");
                     }
-                    _context4.next = 4;
+                    _context5.next = 4;
                     return (0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.sendPasswordResetEmail)(auth, email).then(function () {
                       return true;
                     })["catch"](function (error) {
@@ -35450,12 +35492,12 @@ window.sendPassswordReset = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regene
                       Swal.showValidationMessage("Wrong Email");
                     });
                   case 4:
-                    return _context4.abrupt("return", _context4.sent);
+                    return _context5.abrupt("return", _context5.sent);
                   case 5:
                   case "end":
-                    return _context4.stop();
+                    return _context5.stop();
                 }
-              }, _callee4);
+              }, _callee5);
             }));
             function preConfirm() {
               return _preConfirm.apply(this, arguments);
@@ -35482,15 +35524,15 @@ window.sendPassswordReset = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regene
         });
       case 2:
       case "end":
-        return _context5.stop();
+        return _context6.stop();
     }
-  }, _callee5);
+  }, _callee6);
 }));
-window.userLogin = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-  return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-    while (1) switch (_context7.prev = _context7.next) {
+window.userLogin = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+  return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+    while (1) switch (_context8.prev = _context8.next) {
       case 0:
-        _context7.next = 2;
+        _context8.next = 2;
         return Swal.fire({
           title: 'Account Login',
           html: "<input type=\"text\" id=\"email\" class=\"swal2-input w-7/8\" placeholder=\"Email\">\n        <input type=\"password\" id=\"password\" class=\"swal2-input w-7/8\" placeholder=\"Password\">\n        <button class=\"text-blue-700 mt-4 text-sm\" onclick=\"sendPassswordReset()\">Forget Password?</button>",
@@ -35498,25 +35540,25 @@ window.userLogin = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRunt
           focusConfirm: false,
           showLoaderOnConfirm: true,
           preConfirm: function () {
-            var _preConfirm2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+            var _preConfirm2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
               var email, password;
-              return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-                while (1) switch (_context6.prev = _context6.next) {
+              return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                while (1) switch (_context7.prev = _context7.next) {
                   case 0:
                     email = Swal.getPopup().querySelector('#email').value;
                     password = Swal.getPopup().querySelector('#password').value;
                     if (!email || !password) {
                       Swal.showValidationMessage("Please enter email and password");
                     }
-                    _context6.next = 5;
+                    _context7.next = 5;
                     return signIn(email, password);
                   case 5:
-                    return _context6.abrupt("return", _context6.sent);
+                    return _context7.abrupt("return", _context7.sent);
                   case 6:
                   case "end":
-                    return _context6.stop();
+                    return _context7.stop();
                 }
-              }, _callee6);
+              }, _callee7);
             }));
             function preConfirm() {
               return _preConfirm2.apply(this, arguments);
@@ -35539,12 +35581,12 @@ window.userLogin = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRunt
           showMessage("Login Successful");
         });
       case 2:
-        return _context7.abrupt("return", true);
+        return _context8.abrupt("return", true);
       case 3:
       case "end":
-        return _context7.stop();
+        return _context8.stop();
     }
-  }, _callee7);
+  }, _callee8);
 }));
 window.addTeam = function () {
   Swal.fire({
@@ -35624,12 +35666,12 @@ window.addTeam = function () {
           confirmButtonText: 'Add'
         }).then(function (response) {
           var awards = /*#__PURE__*/function () {
-            var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+            var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
               var data;
-              return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-                while (1) switch (_context8.prev = _context8.next) {
+              return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+                while (1) switch (_context9.prev = _context9.next) {
                   case 0:
-                    _context8.next = 2;
+                    _context9.next = 2;
                     return axios.get("https://www.thebluealliance.com/api/v3/team/frc".concat(result.value.team_number, "/awards"), {
                       headers: {
                         "accept": "application/json",
@@ -35646,16 +35688,16 @@ window.addTeam = function () {
                       return [];
                     });
                   case 2:
-                    data = _context8.sent;
-                    return _context8.abrupt("return", data);
+                    data = _context9.sent;
+                    return _context9.abrupt("return", data);
                   case 4:
                   case "end":
-                    return _context8.stop();
+                    return _context9.stop();
                 }
-              }, _callee8);
+              }, _callee9);
             }));
             return function awards() {
-              return _ref6.apply(this, arguments);
+              return _ref7.apply(this, arguments);
             };
           }();
           awards().then(function (awards_result) {
@@ -35672,23 +35714,39 @@ window.addTeam = function () {
     }
   });
 };
-window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-  var number,
-    html,
-    _args9 = arguments;
-  return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-    while (1) switch (_context9.prev = _context9.next) {
+window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+  var numbers,
+    uuid,
+    data,
+    formHtml,
+    recordTabHtml,
+    teamNumbers,
+    _args10 = arguments;
+  return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+    while (1) switch (_context10.prev = _context10.next) {
       case 0:
-        number = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : null;
-        if (!(number == null)) {
-          _context9.next = 5;
+        numbers = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : null;
+        uuid = _args10.length > 1 && _args10[1] !== undefined ? _args10[1] : null;
+        data = {};
+        if (!(uuid != null)) {
+          _context10.next = 8;
           break;
         }
-        _context9.next = 4;
+        _context10.next = 6;
+        return getRecord(uuid);
+      case 6:
+        data = _context10.sent;
+        data = data != null ? data.data().parameters : {};
+      case 8:
+        if (!(numbers == null)) {
+          _context10.next = 12;
+          break;
+        }
+        _context10.next = 11;
         return Swal.fire({
           title: 'Start Record',
-          text: 'enter team number',
-          input: 'number',
+          text: 'enter team numbers(separate by comma)',
+          input: 'text',
           inputAttributes: {
             autocapitalize: 'off'
           },
@@ -35698,56 +35756,86 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
             return result.value;
           }
         });
-      case 4:
-        number = _context9.sent;
-      case 5:
-        console.log(number);
-        html = "<h1 class=\"text-lg lg:text-xl font-bold\">Record of #<span id=\"recordTeamID\">".concat(number, "</span></h1>");
-        JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString()).forEach(function (parameter) {
-          switch (parameter.type) {
-            case "textarea":
-              html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <textarea id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\"></textarea>\n                        </div>\n                    </div>");
-              break;
-            default:
-              html += "<div>\n                        <label for=\"".concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                        <div class=\"mt-1\">\n                            <input id=\"").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block ").concat(parameter.type != "checkbox" ? 'w-full' : '', " rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                        </div>\n                    </div>");
+      case 11:
+        numbers = _context10.sent;
+      case 12:
+        formHtml = "";
+        recordTabHtml = "";
+        teamNumbers = numbers.split(",");
+        document.getElementById("recordTabContainer").setAttribute("current", teamNumbers[0]);
+        teamNumbers.forEach(function (number) {
+          recordTabHtml += "<button class=\"flex-1 py-3 border-b-0 border-blue-500 text-blue-800 tab-button\" team-number=\"".concat(number, "\">\n        # ").concat(number, "\n        </button>");
+          formHtml += "<form class=\"space-y-4 px-4 py-5 sm:p-6 teamRecordForm hidden\" team-number=\"".concat(number, "\">\n        <h1 class=\"text-lg lg:text-xl font-bold\">Record of #").concat(number, "</h1>");
+          JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString()).forEach(function (parameter) {
+            switch (parameter.type) {
+              case "textarea":
+                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <textarea id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : "", "</textarea>\n                            </div>\n                        </div>");
+                break;
+              case "heading":
+                var sizes = ["text-4xl", "text-3xl", "text-2xl", "text-xl", "text-lg", "text-base"];
+                formHtml += "<div>\n                            <div class=\"mt-1\">\n                                <h".concat(parameter.size, " class=\"").concat(sizes[parameter.size - 1], " font-bold\">").concat(parameter.name, "</h").concat(parameter.size, ">\n                            </div>\n                        </div>");
+                break;
+              case "select":
+                var options = '';
+                parameter.options.forEach(function (option) {
+                  options += "<option value=\"".concat(option.value, "\" ").concat(data[parameter.alias] !== undefined ? data[parameter.alias] == option.value ? "selected" : "" : "", ">").concat(option.name, "</option>");
+                });
+                formHtml += "<div>\n                            <div class=\"mt-1\">\n                                <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                                <select id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">\n                                <option value=\"\" disabled>Select the \"").concat(parameter.name, "\"...</option>\n                                ").concat(options, "\n                                </select>\n                            </div>\n                        </div>");
+                break;
+              default:
+                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <input id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block ").concat(parameter.type != "checkbox" ? 'w-full' : '', " rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                            </div>\n                        </div>");
+            }
+          });
+          if (uuid != null) {
+            formHtml += "<input id=\"".concat(number, "-uuid\" value=\"").concat(uuid, "\"  hidden disabled />");
           }
+          formHtml += "</form>";
         });
-        updateEleHTML("form_content", html);
+        updateEleHTML("recordTabContainer", recordTabHtml);
+        updateEleHTML("form_content", formHtml);
+        document.querySelector(".tab-button[team-number=\"".concat(document.getElementById("recordTabContainer").getAttribute("current"), "\"]")).classList.replace('border-b-0', 'border-b-2');
+        document.querySelector(".teamRecordForm[team-number=\"".concat(document.getElementById("recordTabContainer").getAttribute("current"), "\"]")).classList.toggle('hidden');
         showPage("recordCreateScreen");
-      case 10:
+      case 22:
       case "end":
-        return _context9.stop();
+        return _context10.stop();
     }
-  }, _callee9);
+  }, _callee10);
 }));
 window.recordSave = function () {
-  var data = {
-    team_number: window.document.getElementById('recordTeamID').innerText.toString(),
-    parameters: {},
-    timestamp: firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.Timestamp.now(),
-    userId: auth.currentUser.uid
-  };
-  JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, 'parameters').asString()).forEach(function (parameter) {
-    if (parameter.type == 'number') {
-      data['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
-    } else if (parameter.type == 'checkbox') {
-      data['parameters'][parameter.alias] = document.getElementById(parameter.alias).checked;
+  document.querySelectorAll('.teamRecordForm').forEach(function (el) {
+    var data = {
+      team_number: el.getAttribute("team-number").toString(),
+      parameters: {},
+      timestamp: firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.Timestamp.now(),
+      userId: auth.currentUser.uid
+    };
+    JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, 'parameters').asString()).forEach(function (parameter) {
+      if (parameter.type == 'number') {
+        data['parameters'][parameter.alias] = Number(document.getElementById("".concat(data.team_number, "-").concat(parameter.alias)).value);
+      } else if (parameter.type == 'checkbox') {
+        data['parameters'][parameter.alias] = document.getElementById("".concat(data.team_number, "-").concat(parameter.alias)).checked ? 1 : 0;
+      } else if (parameter.type != 'heading') {
+        data['parameters'][parameter.alias] = document.getElementById("".concat(data.team_number, "-").concat(parameter.alias)).value.replace(/\s+/g, "\\n");
+      }
+    });
+    if (document.getElementById("".concat(data.team_number, "-uuid")) != null) {
+      storeRecord(document.getElementById("".concat(data.team_number, "-uuid")).value, data);
     } else {
-      data['parameters'][parameter.alias] = window.document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
+      storeRecord(_uuid(), data);
     }
   });
-  storeRecord(_uuid(), data);
 };
 window.deleteRecord = /*#__PURE__*/function () {
-  var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(key, team_number) {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(key, team_number) {
     var online;
-    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-      while (1) switch (_context10.prev = _context10.next) {
+    return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+      while (1) switch (_context11.prev = _context11.next) {
         case 0:
-          _context10.next = 2;
+          _context11.next = 2;
           return isOnline();
         case 2:
-          online = _context10.sent;
+          online = _context11.sent;
           Swal.fire({
             icon: 'warning',
             title: "Delete Confirm",
@@ -35768,12 +35856,12 @@ window.deleteRecord = /*#__PURE__*/function () {
           });
         case 4:
         case "end":
-          return _context10.stop();
+          return _context11.stop();
       }
-    }, _callee10);
+    }, _callee11);
   }));
-  return function (_x9, _x10) {
-    return _ref8.apply(this, arguments);
+  return function (_x10, _x11) {
+    return _ref9.apply(this, arguments);
   };
 }();
 window.addTeamViaTBA = function () {
@@ -35785,10 +35873,10 @@ window.addTeamViaTBA = function () {
     });
     return;
   }
-  _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+  _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
     var inputOptions;
-    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-      while (1) switch (_context13.prev = _context13.next) {
+    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
         case 0:
           inputOptions = axios.get("https://www.thebluealliance.com/api/v3/team/frc7589/events/keys", {
             headers: {
@@ -35842,18 +35930,18 @@ window.addTeamViaTBA = function () {
                 confirmButtonText: 'Add',
                 showLoaderOnConfirm: true,
                 preConfirm: function () {
-                  var _preConfirm3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
-                    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-                      while (1) switch (_context12.prev = _context12.next) {
+                  var _preConfirm3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+                    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+                      while (1) switch (_context13.prev = _context13.next) {
                         case 0:
-                          _context12.next = 2;
+                          _context13.next = 2;
                           return result.value.forEach( /*#__PURE__*/function () {
-                            var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(team) {
+                            var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(team) {
                               var info, awards, data;
-                              return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-                                while (1) switch (_context11.prev = _context11.next) {
+                              return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+                                while (1) switch (_context12.prev = _context12.next) {
                                   case 0:
-                                    _context11.next = 2;
+                                    _context12.next = 2;
                                     return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team), {
                                       headers: {
                                         "accept": "application/json",
@@ -35870,8 +35958,8 @@ window.addTeamViaTBA = function () {
                                       return [];
                                     });
                                   case 2:
-                                    info = _context11.sent;
-                                    _context11.next = 5;
+                                    info = _context12.sent;
+                                    _context12.next = 5;
                                     return axios.get("https://www.thebluealliance.com/api/v3/team/".concat(team, "/awards"), {
                                       headers: {
                                         "accept": "application/json",
@@ -35888,7 +35976,7 @@ window.addTeamViaTBA = function () {
                                       return [];
                                     });
                                   case 5:
-                                    awards = _context11.sent;
+                                    awards = _context12.sent;
                                     data = {
                                       info: info,
                                       awards: awards
@@ -35897,21 +35985,21 @@ window.addTeamViaTBA = function () {
                                     storeTeam(info.team_number.toString(), data, true);
                                   case 9:
                                   case "end":
-                                    return _context11.stop();
+                                    return _context12.stop();
                                 }
-                              }, _callee11);
+                              }, _callee12);
                             }));
-                            return function (_x11) {
-                              return _ref10.apply(this, arguments);
+                            return function (_x12) {
+                              return _ref11.apply(this, arguments);
                             };
                           }());
                         case 2:
-                          return _context12.abrupt("return", true);
+                          return _context13.abrupt("return", true);
                         case 3:
                         case "end":
-                          return _context12.stop();
+                          return _context13.stop();
                       }
-                    }, _callee12);
+                    }, _callee13);
                   }));
                   function preConfirm() {
                     return _preConfirm3.apply(this, arguments);
@@ -35928,17 +36016,17 @@ window.addTeamViaTBA = function () {
           });
         case 2:
         case "end":
-          return _context13.stop();
+          return _context14.stop();
       }
-    }, _callee13);
+    }, _callee14);
   }))();
 };
-window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
+window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15() {
   var number;
-  return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-    while (1) switch (_context14.prev = _context14.next) {
+  return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+    while (1) switch (_context15.prev = _context15.next) {
       case 0:
-        _context14.next = 2;
+        _context15.next = 2;
         return Swal.fire({
           title: 'Enter Team Number',
           input: 'number',
@@ -35953,20 +36041,20 @@ window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRun
           }
         });
       case 2:
-        number = _context14.sent;
+        number = _context15.sent;
       case 3:
       case "end":
-        return _context14.stop();
+        return _context15.stop();
     }
-  }, _callee14);
+  }, _callee15);
 }));
 
 // Event Listener
 
 window.addEventListener('load', /*#__PURE__*/function () {
-  var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(event) {
-    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-      while (1) switch (_context15.prev = _context15.next) {
+  var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(event) {
+    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+      while (1) switch (_context16.prev = _context16.next) {
         case 0:
           if ('onLine' in window.navigator) {
             changeDBMode(window.navigator.onLine, true);
@@ -35976,12 +36064,12 @@ window.addEventListener('load', /*#__PURE__*/function () {
           }
         case 1:
         case "end":
-          return _context15.stop();
+          return _context16.stop();
       }
-    }, _callee15);
+    }, _callee16);
   }));
-  return function (_x12) {
-    return _ref12.apply(this, arguments);
+  return function (_x13) {
+    return _ref13.apply(this, arguments);
   };
 }());
 window.addEventListener('offline', function () {
@@ -35992,46 +36080,57 @@ window.addEventListener('online', function () {
   fetchSettings();
 });
 (0,firebase_auth__WEBPACK_IMPORTED_MODULE_4__.onAuthStateChanged)(auth, /*#__PURE__*/function () {
-  var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(user) {
+  var _ref14 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17(user) {
     var uid;
-    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-      while (1) switch (_context16.prev = _context16.next) {
+    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+      while (1) switch (_context17.prev = _context17.next) {
         case 0:
           if (!user) {
-            _context16.next = 5;
+            _context17.next = 5;
             break;
           }
           uid = user.uid;
           getTeamIndex();
-          _context16.next = 9;
+          _context17.next = 9;
           break;
         case 5:
-          _context16.next = 7;
+          _context17.next = 7;
           return userLogin();
         case 7:
-          if (!_context16.sent) {
-            _context16.next = 9;
+          if (!_context17.sent) {
+            _context17.next = 9;
             break;
           }
           getTeamIndex();
         case 9:
         case "end":
-          return _context16.stop();
+          return _context17.stop();
       }
-    }, _callee16);
+    }, _callee17);
   }));
-  return function (_x13) {
-    return _ref13.apply(this, arguments);
+  return function (_x14) {
+    return _ref14.apply(this, arguments);
   };
 }());
 document.getElementById('teamContainer').addEventListener('click', function (e) {
   if (e.target.classList.contains('tab-button')) {
     if (document.getElementById('teamContainer').getAttribute('current') != e.target.getAttribute('page')) {
-      window.document.getElementById(document.getElementById('teamContainer').getAttribute('current')).classList.toggle('hidden');
-      window.document.getElementById(e.target.getAttribute('page')).classList.toggle('hidden');
+      document.getElementById(document.getElementById('teamContainer').getAttribute('current')).classList.toggle('hidden');
+      document.getElementById(e.target.getAttribute('page')).classList.toggle('hidden');
       e.target.classList.replace('border-b-0', 'border-b-2');
-      window.document.querySelector("[page=".concat(document.getElementById('teamContainer').getAttribute('current'), "]")).classList.replace('border-b-2', 'border-b-0');
-      window.document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
+      document.querySelector("[page=".concat(document.getElementById('teamContainer').getAttribute('current'), "]")).classList.replace('border-b-2', 'border-b-0');
+      document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
+    }
+  }
+});
+document.getElementById('recordTabContainer').addEventListener('click', function (e) {
+  if (e.target.classList.contains('tab-button')) {
+    if (document.getElementById('recordTabContainer').getAttribute('current') != e.target.getAttribute('team-number')) {
+      document.querySelector(".teamRecordForm[team-number=\"".concat(document.getElementById('recordTabContainer').getAttribute('current'), "\"]")).classList.toggle('hidden');
+      document.querySelector(".teamRecordForm[team-number=\"".concat(e.target.getAttribute('team-number'), "\"]")).classList.toggle('hidden');
+      e.target.classList.replace('border-b-0', 'border-b-2');
+      document.querySelector(".tab-button[team-number=\"".concat(document.getElementById('recordTabContainer').getAttribute('current'), "\"]")).classList.replace('border-b-2', 'border-b-0');
+      document.getElementById('recordTabContainer').setAttribute('current', e.target.getAttribute('team-number'));
     }
   }
 });

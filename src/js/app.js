@@ -100,21 +100,21 @@ window.isOnline = () => {
 }
 
 window.updateEleText = (id, text) => {
-    window.document.getElementById(id).innerText = text;
+    document.getElementById(id).innerText = text;
 }
 
 window.updateEleHTML = (id, html) => {
-    window.document.getElementById(id).innerHTML = html;
+    document.getElementById(id).innerHTML = html;
 }
 
 window.showPage = (name) => {
-    if(last_page != name) window.document.getElementById(name).classList.replace("hidden", "box");
-    if(last_page != null && last_page != name) window.document.getElementById(last_page).classList.replace("box", "hidden");
+    if(last_page != name) document.getElementById(name).classList.replace("hidden", "box");
+    if(last_page != null && last_page != name) document.getElementById(last_page).classList.replace("box", "hidden");
     last_page = name;
 }
 
 window.copyHTML = (target, source) => {
-    window.document.getElementById(target).innerHTML = window.document.getElementById(source).innerHTML;
+    document.getElementById(target).innerHTML = document.getElementById(source).innerHTML;
 }
 
 // Firebase
@@ -192,6 +192,16 @@ async function getAllRecords(number = null) {
     }
 }
 
+window.getRecord = async (uuid) => {
+    showMessage("Fetching record...");
+    const docSnap = await getDoc(doc(db, "records", uuid));
+    if(docSnap.exists()) {
+        return docSnap;
+    } else {
+        showMessage("Record no found");
+    }
+}
+
 async function getTeams(number = null) {
     showMessage("Fetching teams...");
     if(number != null) {
@@ -200,6 +210,7 @@ async function getTeams(number = null) {
             return docSnap;
         } else {
             showMessage("Team no found");
+            return null;
         }
     } else {
         return await getDocs(collection(db, "teams"));
@@ -227,7 +238,8 @@ async function storeRecord(key, data, silent = false) {
 
     setDoc(
         doc(db, "records", key),
-        data
+        data,
+        { merge: true }
     ).then(() => {
         if(!silent) showMessage("Record successfully store!");
         if(online) showTeam(data.team_number);
@@ -243,8 +255,19 @@ window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     parameters.forEach((parameter) => {
-        formula = formula.replace(parameter.alias, data[parameter.alias]);
+        try {
+            if(typeof data[parameter.alias] === "boolean") {
+                formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+            } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
+                formula = formula.replace(parameter.alias, data[parameter.alias]);
+            } else {
+                formula = formula.replace(parameter.alias, "1");
+            }
+        } catch(e) {
+            formula = formula.replace(parameter.alias, "1");
+        }
     });
+    console.log(formula);
     return eval(formula);
 }
 
@@ -256,7 +279,7 @@ window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");
     showPage("teamIndexScreen");
     if(tba_available()) {
-        window.document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
+        document.getElementById("tbaAddTeamBtn").classList.remove("hidden");
     }
 
     getTeams().then((teams) => {
@@ -305,11 +328,11 @@ window.getTeamIndex = () => {
 }
 
 window.showTeam = (number) => {
-    window.document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
-    window.document.getElementById('teamRecordList').classList.remove('hidden');
-    window.document.getElementById('teamInfo').classList.add('hidden');
-    window.document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
-    window.document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
+    document.getElementById('teamContainer').setAttribute('current', 'teamRecordList');
+    document.getElementById('teamRecordList').classList.remove('hidden');
+    document.getElementById('teamInfo').classList.add('hidden');
+    document.querySelector('[page=teamRecordList]').classList.replace('border-b-0', 'border-b-2');
+    document.querySelector('[page=teamInfo]').classList.replace('border-b-2', 'border-b-0');
 
     getTeams(number).then((team) => {
         (async () => {
@@ -320,7 +343,7 @@ window.showTeam = (number) => {
                 updateEleText("teamID", teamData.info.team_number);
                 updateEleText("teamName", teamData.info.nickname);
                 updateEleText("teamRookieYear", teamData.info.rookie_year);
-                window.document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate(${number})`);
+                document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate(${number})`);
 
                 if('onLine' in navigator && teamData.offline) {
                     if(navigator.onLine) {
@@ -392,11 +415,18 @@ window.showTeam = (number) => {
                     records.forEach((record) => {
                         var record_data = record.data();
                         htmlCode += `<div class="bg-blue-50 rounded-lg w-full p-3 lg:p-5 space-y-2 relative">
-                            <button class="w-5 h-5 absolute top-2 right-2" onclick="deleteRecord('${record.id}', '${number}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                </svg>
-                            </button>
+                            <div class="absolute top-2 right-2 flex items-center space-x-2">
+                                <button class="w-5 h-5" onclick="deleteRecord('${record.id}', '${number}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </button>
+                                <button class="w-5 h-5" onclick="recordCreate('${number}', '${record.id}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                    </svg>
+                                </button>
+                            </div>
                             <div>
                                 <h1 class="text-lg flex items-center space-x-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -638,12 +668,18 @@ window.addTeam = () => {
     });
 }
 
-window.recordCreate = async (number = null) => {
-    if(number == null) {
-        number = await Swal.fire({
+window.recordCreate = async (numbers = null, uuid = null) => {
+    var data = {};
+    if(uuid != null) {
+        data = await getRecord(uuid);
+        data =  data != null ? data.data().parameters : {};
+    }
+    
+    if(numbers == null) {
+        numbers = await Swal.fire({
                 title: 'Start Record',
-                text: 'enter team number',
-                input: 'number',
+                text: 'enter team numbers(separate by comma)',
+                input: 'text',
                 inputAttributes: {
                     autocapitalize: 'off'
                 },
@@ -654,51 +690,103 @@ window.recordCreate = async (number = null) => {
                 }
             });
     }
-    console.log(number);
-    var html = `<h1 class="text-lg lg:text-xl font-bold">Record of #<span id="recordTeamID">${number}</span></h1>`;
-    JSON.parse(getValue(remoteConfig, "parameters").asString()).forEach((parameter) => {
-        switch(parameter.type) {
-            case "textarea":
-                html += `<div>
-                        <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
-                        <div class="mt-1">
-                            <textarea id="${parameter.alias}" name="${parameter.alias}" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}"></textarea>
-                        </div>
-                    </div>`;
-                break;
-            default:
-                html += `<div>
-                        <label for="${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
-                        <div class="mt-1">
-                            <input id="${parameter.alias}" name="${parameter.alias}" class="mt-1 block ${parameter.type != "checkbox" ? 'w-full' : ''} rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${(parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
-                        </div>
-                    </div>`;
+    var formHtml = "";
+    var recordTabHtml = "";
+    const teamNumbers = numbers.split(",");
+    document.getElementById("recordTabContainer").setAttribute("current", teamNumbers[0]);
+    teamNumbers.forEach((number) => {
+        recordTabHtml += `<button class="flex-1 py-3 border-b-0 border-blue-500 text-blue-800 tab-button" team-number="${number}">
+        # ${number}
+        </button>`;
+        formHtml += `<form class="space-y-4 px-4 py-5 sm:p-6 teamRecordForm hidden" team-number="${number}">
+        <h1 class="text-lg lg:text-xl font-bold">Record of #${number}</h1>`;
+        JSON.parse(getValue(remoteConfig, "parameters").asString()).forEach((parameter) => {
+            switch(parameter.type) {
+                case "textarea":
+                    formHtml += `<div>
+                            <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
+                            <div class="mt-1">
+                                <textarea id="${number}-${parameter.alias}" name="${parameter.alias}" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}">${data[parameter.alias] !== undefined ? data[parameter.alias] : ""}</textarea>
+                            </div>
+                        </div>`;
+                    break;
+                case "heading":
+                    var sizes = [
+                        "text-4xl",
+                        "text-3xl",
+                        "text-2xl",
+                        "text-xl",
+                        "text-lg",
+                        "text-base"
+                    ];
+                    formHtml += `<div>
+                            <div class="mt-1">
+                                <h${parameter.size} class="${sizes[parameter.size-1]} font-bold">${parameter.name}</h${parameter.size}>
+                            </div>
+                        </div>`;
+                    break;
+                case "select":
+                    var options = '';
+                    parameter.options.forEach((option) => {
+                        options += `<option value="${option.value}" ${data[parameter.alias] !== undefined ? (data[parameter.alias] == option.value ? "selected" : "") : ""}>${option.name}</option>`;
+                    });
+                    formHtml += `<div>
+                            <div class="mt-1">
+                                <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
+                                <select id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}">
+                                <option value="" disabled>Select the "${parameter.name}"...</option>
+                                ${options}
+                                </select>
+                            </div>
+                        </div>`;
+                    break;
+                default:
+                    formHtml += `<div>
+                            <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
+                            <div class="mt-1">
+                                <input id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block ${parameter.type != "checkbox" ? 'w-full' : ''} rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${data[parameter.alias] !== undefined ? data[parameter.alias] : (parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
+                            </div>
+                        </div>`;
+            }
+        });
+        if(uuid != null) {
+            formHtml += `<input id="${number}-uuid" value="${uuid}"  hidden disabled />`;
         }
+        formHtml += "</form>";
     });
-    updateEleHTML("form_content", html);
+    updateEleHTML("recordTabContainer", recordTabHtml);
+    updateEleHTML("form_content", formHtml);
+    document.querySelector(`.tab-button[team-number="${document.getElementById("recordTabContainer").getAttribute("current")}"]`).classList.replace('border-b-0', 'border-b-2');
+    document.querySelector(`.teamRecordForm[team-number="${document.getElementById("recordTabContainer").getAttribute("current")}"]`).classList.toggle('hidden');
     showPage("recordCreateScreen");
+    
 }
 
 window.recordSave = () => {
-    
-    var data = {
-        team_number: window.document.getElementById('recordTeamID').innerText.toString(),
-        parameters: {},
-        timestamp: Timestamp.now(),
-        userId: auth.currentUser.uid
-    };
+    document.querySelectorAll('.teamRecordForm').forEach((el) => {
+        var data = {
+            team_number: el.getAttribute("team-number").toString(),
+            parameters: {},
+            timestamp: Timestamp.now(),
+            userId: auth.currentUser.uid
+        };
 
-    JSON.parse(getValue(remoteConfig, 'parameters').asString()).forEach((parameter) => {
-        if(parameter.type == 'number') {
-            data['parameters'][parameter.alias] = Number(document.getElementById(parameter.alias).value);
-        } else if(parameter.type == 'checkbox') {
-            data['parameters'][parameter.alias] = document.getElementById(parameter.alias).checked;
+        JSON.parse(getValue(remoteConfig, 'parameters').asString()).forEach((parameter) => {
+            if(parameter.type == 'number') {
+                data['parameters'][parameter.alias] = Number(document.getElementById(`${data.team_number}-${parameter.alias}`).value);
+            } else if(parameter.type == 'checkbox') {
+                data['parameters'][parameter.alias] = document.getElementById(`${data.team_number}-${parameter.alias}`).checked ? 1 : 0;
+            } else if(parameter.type != 'heading') {
+                data['parameters'][parameter.alias] = document.getElementById(`${data.team_number}-${parameter.alias}`).value.replace(/\s+/g, "\\n");
+            }
+        });
+
+        if(document.getElementById(`${data.team_number}-uuid`) != null) {
+            storeRecord(document.getElementById(`${data.team_number}-uuid`).value, data);
         } else {
-            data['parameters'][parameter.alias] = window.document.getElementById(parameter.alias).value.replace(/\s+/g, "\\n");
+            storeRecord(_uuid(), data);
         }
     });
-
-    storeRecord(_uuid(), data);
 }
 
 window.deleteRecord = async (key, team_number) => {
@@ -894,11 +982,23 @@ onAuthStateChanged(auth, async (user) => {
 document.getElementById('teamContainer').addEventListener('click', (e) => {
     if (e.target.classList.contains('tab-button')) {
         if(document.getElementById('teamContainer').getAttribute('current') != e.target.getAttribute('page')) {
-            window.document.getElementById(document.getElementById('teamContainer').getAttribute('current')).classList.toggle('hidden');
-            window.document.getElementById(e.target.getAttribute('page')).classList.toggle('hidden');
+            document.getElementById(document.getElementById('teamContainer').getAttribute('current')).classList.toggle('hidden');
+            document.getElementById(e.target.getAttribute('page')).classList.toggle('hidden');
             e.target.classList.replace('border-b-0', 'border-b-2');
-            window.document.querySelector(`[page=${document.getElementById('teamContainer').getAttribute('current')}]`).classList.replace('border-b-2', 'border-b-0');
-            window.document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
+            document.querySelector(`[page=${document.getElementById('teamContainer').getAttribute('current')}]`).classList.replace('border-b-2', 'border-b-0');
+            document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
+        }
+    }
+});
+
+document.getElementById('recordTabContainer').addEventListener('click', (e) => {
+    if (e.target.classList.contains('tab-button')) {
+        if(document.getElementById('recordTabContainer').getAttribute('current') != e.target.getAttribute('team-number')) {
+            document.querySelector(`.teamRecordForm[team-number="${document.getElementById('recordTabContainer').getAttribute('current')}"]`).classList.toggle('hidden');
+            document.querySelector(`.teamRecordForm[team-number="${e.target.getAttribute('team-number')}"]`).classList.toggle('hidden');
+            e.target.classList.replace('border-b-0', 'border-b-2');
+            document.querySelector(`.tab-button[team-number="${document.getElementById('recordTabContainer').getAttribute('current')}"]`).classList.replace('border-b-2', 'border-b-0');
+            document.getElementById('recordTabContainer').setAttribute('current', e.target.getAttribute('team-number'));
         }
     }
 });
