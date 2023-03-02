@@ -6,7 +6,6 @@ import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where
 import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 import { Chart } from 'chart.js/auto';
-import { forEach } from "lodash";
 import Swal from "sweetalert2";
 
 window.axios = require('axios');
@@ -270,6 +269,22 @@ const allTeamChart = new Chart(document.getElementById('allTeamChart'), {
     }
 });
 
+const bgColors = [
+    "#36a2eb",
+    "#ff6383",
+    "#4cbfc0",
+    "#fe9e40",
+    "#9966ff",
+    "#ffcd57",
+    "#c8cbce",
+    "#8e8466",
+    "#17c91f",
+    "#4456e8",
+    "#a02964",
+    "#5c6912",
+    "#c7c8e9"
+];
+
 window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");
     showPage("teamIndexScreen");
@@ -282,14 +297,21 @@ window.getTeamIndex = () => {
                 datasets: []
             };
             var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+            var i = 0;
             Object.keys(parameters).forEach((key) => {
+                if(i >= bgColors.length) {
+                    i = 0;
+                }
                 if(parameters[key].type != "number") return;
                 data.datasets.push({
                     label: parameters[key].name + "(Average)",
                     alias: parameters[key].alias,
-                    data: []
+                    data: [],
+                    backgroundColor: bgColors[i],
+                    borderColor: bgColors[i]
                 });
-            });0
+                i++;
+            });
             teams.forEach(async (team) => {
                 var teamData = team.data();
                 var rate = 0;
