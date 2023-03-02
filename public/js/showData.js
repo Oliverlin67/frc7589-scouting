@@ -77849,8 +77849,19 @@ window.getRate = function (data) {
   var formula = (0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "formula").asString();
   var parameters = JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString());
   parameters.forEach(function (parameter) {
-    formula = formula.replace(parameter.alias, data[parameter.alias]);
+    try {
+      if (typeof data[parameter.alias] === "boolean") {
+        formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+      } else if (data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
+        formula = formula.replace(parameter.alias, data[parameter.alias]);
+      } else {
+        formula = formula.replace(parameter.alias, "1");
+      }
+    } catch (e) {
+      formula = formula.replace(parameter.alias, "1");
+    }
   });
+  console.log(formula);
   return eval(formula);
 };
 
@@ -78164,18 +78175,30 @@ window.exportExcel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRu
         if (number != null) {
           new_array = [];
           records.forEach(function (record) {
-            new_array.push(flatten(record.data().parameters));
+            var _json = {
+              uuid: record.id
+            };
+            var record_parameters = flatten(record.data().parameters);
+            Object.keys(record_parameters).forEach(function (key) {
+              _json[key] = record_parameters[key];
+            });
+            new_json[record.data().team_number].push(_json);
           });
           XLSX.utils.book_append_sheet(wb, ws, "team #".concat(number));
         } else {
           new_json = {};
           records.forEach(function (record) {
-            if (record.data().team_number in new_json) {
-              new_json[record.data().team_number].push(flatten(record.data().parameters));
-            } else {
+            var _json = {
+              uuid: record.id
+            };
+            var record_parameters = flatten(record.data().parameters);
+            Object.keys(record_parameters).forEach(function (key) {
+              _json[key] = record_parameters[key];
+            });
+            if (!(record.data().team_number in new_json)) {
               new_json[record.data().team_number] = [];
-              new_json[record.data().team_number].push(flatten(record.data().parameters));
             }
+            new_json[record.data().team_number].push(_json);
           });
           Object.keys(new_json).forEach(function (teamKey) {
             ws = XLSX.utils.json_to_sheet(new_json[teamKey]);

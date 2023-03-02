@@ -226,8 +226,19 @@ window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     parameters.forEach((parameter) => {
-        formula = formula.replace(parameter.alias, data[parameter.alias]);
+        try {
+            if(typeof data[parameter.alias] === "boolean") {
+                formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+            } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
+                formula = formula.replace(parameter.alias, data[parameter.alias]);
+            } else {
+                formula = formula.replace(parameter.alias, "1");
+            }
+        } catch(e) {
+            formula = formula.replace(parameter.alias, "1");
+        }
     });
+    console.log(formula);
     return eval(formula);
 }
 
@@ -546,18 +557,30 @@ window.exportExcel = async (number = null) => {
     if(number != null) {
         var new_array = [];
         records.forEach((record) => {
-            new_array.push(flatten(record.data().parameters));
+            var _json = {
+                uuid: record.id
+            };
+            const record_parameters = flatten(record.data().parameters);
+            Object.keys(record_parameters).forEach((key) => {
+                _json[key] = record_parameters[key];
+            })
+            new_json[record.data().team_number].push(_json);
         });
         XLSX.utils.book_append_sheet(wb, ws, `team #${number}`);
     } else {
         var new_json = {};
         records.forEach((record) => {
-            if(record.data().team_number in new_json) {
-                new_json[record.data().team_number].push(flatten(record.data().parameters));
-            } else {
+            var _json = {
+                uuid: record.id
+            };
+            const record_parameters = flatten(record.data().parameters);
+            Object.keys(record_parameters).forEach((key) => {
+                _json[key] = record_parameters[key];
+            })
+            if(!(record.data().team_number in new_json)) {
                 new_json[record.data().team_number] = [];
-                new_json[record.data().team_number].push(flatten(record.data().parameters));
             }
+            new_json[record.data().team_number].push(_json);
         });
         Object.keys(new_json).forEach((teamKey) => {
             ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
