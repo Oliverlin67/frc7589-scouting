@@ -77884,6 +77884,7 @@ var allTeamChart = new chart_js_auto__WEBPACK_IMPORTED_MODULE_5__.Chart(document
       }
     },
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'right'

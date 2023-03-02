@@ -1198,6 +1198,12 @@ select {
 .h-screen {
   height: 100vh !important;
 }
+.h-\[70vw\] {
+  height: 70vw !important;
+}
+.h-\[70vh\] {
+  height: 70vh !important;
+}
 .w-14 {
   width: 3.5rem !important;
 }
@@ -1707,6 +1713,10 @@ select {
 
   .md\:h-16 {
     height: 4rem !important;
+  }
+
+  .md\:h-\[60vh\] {
+    height: 60vh !important;
   }
 
   .md\:rounded-lg {

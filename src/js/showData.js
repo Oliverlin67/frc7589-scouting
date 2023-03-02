@@ -261,6 +261,7 @@ const allTeamChart = new Chart(document.getElementById('allTeamChart'), {
             }
         },
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'right',
