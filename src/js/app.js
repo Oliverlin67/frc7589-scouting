@@ -343,7 +343,7 @@ window.showTeam = (number) => {
                 updateEleText("teamID", teamData.info.team_number);
                 updateEleText("teamName", teamData.info.nickname);
                 updateEleText("teamRookieYear", teamData.info.rookie_year);
-                document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate(${number})`);
+                document.getElementById('recordCreateBtn').setAttribute('onclick', `recordCreate('${number}')`);
 
                 if('onLine' in navigator && teamData.offline) {
                     if(navigator.onLine) {

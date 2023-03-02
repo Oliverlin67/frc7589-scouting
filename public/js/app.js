@@ -35366,7 +35366,7 @@ window.showTeam = function (number) {
             updateEleText("teamID", teamData.info.team_number);
             updateEleText("teamName", teamData.info.nickname);
             updateEleText("teamRookieYear", teamData.info.rookie_year);
-            document.getElementById('recordCreateBtn').setAttribute('onclick', "recordCreate(".concat(number, ")"));
+            document.getElementById('recordCreateBtn').setAttribute('onclick', "recordCreate('".concat(number, "')"));
             if (!('onLine' in navigator && teamData.offline)) {
               _context4.next = 17;
               break;
