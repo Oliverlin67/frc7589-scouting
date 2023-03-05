@@ -210,7 +210,8 @@ async function storeTeam(key, data, silent = false) {
     const online = await isOnline();
     setDoc(
         doc(db, "teams", key),
-        data
+        data,
+        { merge: true }
     ).then(() => {
         if(!silent) showMessage("Team successfully store!");
     }).catch((error) => {
@@ -237,7 +238,6 @@ window.getRate = (data) => {
             formula = formula.replace(parameter.alias, "1");
         }
     });
-    console.log(formula);
     return eval(formula);
 }
 
@@ -294,22 +294,39 @@ window.getTeamIndex = () => {
             var html = "";
             var data = {
                 labels: [],
-                datasets: []
+                datasets: [
+                    {
+                        label: "Ranking Point(Total)",
+                        alias: "rankingPoint",
+                        data: [],
+                        backgroundColor: bgColors[0],
+                        borderColor: bgColors[0]
+                    },
+                    {
+                        label: "Rate(Average)",
+                        alias: "rate",
+                        data: [],
+                        backgroundColor: bgColors[1],
+                        borderColor: bgColors[1]
+                    }
+                ]
             };
             var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
-            var i = 0;
+            var i = 2;
             Object.keys(parameters).forEach((key) => {
                 if(i >= bgColors.length) {
                     i = 0;
                 }
                 if(parameters[key].type != "number") return;
-                data.datasets.push({
-                    label: parameters[key].name + "(Average)",
-                    alias: parameters[key].alias,
-                    data: [],
-                    backgroundColor: bgColors[i],
-                    borderColor: bgColors[i]
-                });
+                if(parameters[key].alias != "rankingPoint") {
+                    data.datasets.push({
+                        label: parameters[key].name + "(Average)",
+                        alias: parameters[key].alias,
+                        data: [],
+                        backgroundColor: bgColors[i],
+                        borderColor: bgColors[i]
+                    });
+                }
                 i++;
             });
             teams.forEach(async (team) => {
@@ -364,14 +381,24 @@ window.getTeamIndex = () => {
                                     <span>Export</span>
                                 </button>
                             </div>`;
+
+                    teamDatasets['rate'] = rate;
                     Object.keys(teamDatasets).forEach((key) => {
                         const index = data.datasets.findIndex(obj => obj.alias == key);
-                        if(index != -1) {
-                            data.datasets[index].data.push(teamDatasets[key]/records.size);
+                        if(index != -1 && !isNaN(teamDatasets[key]/records.size)) {
+                            if(key == "rankingPoint") {
+                                data.datasets[index].data.push(teamDatasets[key]);
+                            } else {
+                                data.datasets[index].data.push(teamDatasets[key]/records.size);
+                            }
                         }
                     });
+                    if(teamData.rankingPoint != teamDatasets["rankingPoint"] && teamDatasets["rankingPoint"] != undefined) {
+                        teamData.rankingPoint = teamDatasets["rankingPoint"];
+                        storeTeam(team.id, teamData);
+                    }
                 });
-                console.log(teamDatasets);
+                console.log(data);
                 updateEleHTML("team-index", html);
                 allTeamChart.data = data;
                 allTeamChart.update();
@@ -439,6 +466,7 @@ window.showTeam = (number) => {
                                                     showMessage("FAILED to fetch team info", true, 'warning');
                                                 });
                         storeTeam(number, {
+                            rankingPoint: 0,
                             info: info,
                             awards: awards,
                             offline: firebase.firestore.FieldValue.delete()
@@ -475,7 +503,6 @@ window.showTeam = (number) => {
                 updateEleHTML("teamInfo", html);
             }
             getAllRecords(number).then((records) => {
-                console.log(records.size);
                 if(!records.empty) {
                     var htmlCode = "";
                     /*
@@ -497,10 +524,8 @@ window.showTeam = (number) => {
                             borderWidth: 1
                         });
                     });
-                    console.log(data);
                     var i = 0;
                     records.forEach((record) => {
-                        console.log(record.data());
                         data.labels.push(record.id);
 
                         var record_data = record.data();

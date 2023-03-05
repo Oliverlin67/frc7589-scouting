@@ -35406,6 +35406,7 @@ window.showTeam = function (number) {
           case 15:
             awards = _context4.sent;
             storeTeam(number, {
+              rankingPoint: 0,
               info: info,
               awards: awards,
               offline: (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.deleteField)()
@@ -35653,6 +35654,7 @@ window.addTeam = function () {
                   team_number: result.value.number.toString(),
                   nickname: response.value
                 },
+                rankingPoint: 0,
                 offline: true
               });
               getTeamIndex();
@@ -35702,6 +35704,7 @@ window.addTeam = function () {
           }();
           awards().then(function (awards_result) {
             var data = {
+              rankingPoint: 0,
               info: result.value,
               awards: awards_result
             };
@@ -35739,7 +35742,7 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
         data = data != null ? data.data().parameters : {};
       case 8:
         if (!(numbers == null)) {
-          _context10.next = 12;
+          _context10.next = 14;
           break;
         }
         _context10.next = 11;
@@ -35752,7 +35755,8 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
             pattern: '^[0-9]{1,}(?:,[0-9]{1,})*$'
           },
           validationMessage: 'Please enter valid team numbers(Check if you leave blank there or use ZH comma)',
-          confirmButtonText: 'Start'
+          confirmButtonText: 'Start',
+          showCancelButton: 'Cancel'
         }).then(function (result) {
           if (result.isConfirmed) {
             return result.value;
@@ -35760,7 +35764,12 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
         });
       case 11:
         numbers = _context10.sent;
-      case 12:
+        if (!(numbers === undefined)) {
+          _context10.next = 14;
+          break;
+        }
+        return _context10.abrupt("return");
+      case 14:
         formHtml = "";
         recordTabHtml = "";
         teamNumbers = numbers.split(",");
@@ -35798,7 +35807,7 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
         document.querySelector(".tab-button[team-number=\"".concat(document.getElementById("recordTabContainer").getAttribute("current"), "\"]")).classList.replace('border-b-0', 'border-b-2');
         document.querySelector(".teamRecordForm[team-number=\"".concat(document.getElementById("recordTabContainer").getAttribute("current"), "\"]")).classList.toggle('hidden');
         showPage("recordCreateScreen");
-      case 22:
+      case 24:
       case "end":
         return _context10.stop();
     }
@@ -35980,6 +35989,7 @@ window.addTeamViaTBA = function () {
                                   case 5:
                                     awards = _context12.sent;
                                     data = {
+                                      rankingPoint: 0,
                                       info: info,
                                       awards: awards
                                     };

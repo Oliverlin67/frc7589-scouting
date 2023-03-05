@@ -1192,17 +1192,14 @@ select {
 .h-8 {
   height: 2rem !important;
 }
+.h-\[70vh\] {
+  height: 70vh !important;
+}
 .h-full {
   height: 100% !important;
 }
 .h-screen {
   height: 100vh !important;
-}
-.h-\[70vw\] {
-  height: 70vw !important;
-}
-.h-\[70vh\] {
-  height: 70vh !important;
 }
 .w-14 {
   width: 3.5rem !important;
@@ -1293,11 +1290,6 @@ select {
   --tw-space-y-reverse: 0 !important;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse))) !important;
   margin-bottom: calc(1rem * var(--tw-space-y-reverse)) !important;
-}
-.truncate {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
 }
 .rounded {
   border-radius: 0.25rem !important;
@@ -1494,9 +1486,6 @@ select {
 .uppercase {
   text-transform: uppercase !important;
 }
-.capitalize {
-  text-transform: capitalize !important;
-}
 .italic {
   font-style: italic !important;
 }
@@ -1582,10 +1571,6 @@ select {
 }
 .blur {
   --tw-blur: blur(8px) !important;
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow) !important;
-}
-.invert {
-  --tw-invert: invert(100%) !important;
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow) !important;
 }
 .filter {

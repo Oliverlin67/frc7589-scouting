@@ -372,6 +372,7 @@ window.showTeam = (number) => {
                                                     showMessage("FAILED to fetch team info", true, 'warning');
                                                 });
                         storeTeam(number, {
+                            rankingPoint: 0,
                             info: info,
                             awards: awards,
                             offline: deleteField()
@@ -623,6 +624,7 @@ window.addTeam = () => {
                                     team_number: result.value.number.toString(),
                                     nickname: response.value,
                                 },
+                                rankingPoint: 0,
                                 offline: true
                             });
                             getTeamIndex();
@@ -655,6 +657,7 @@ window.addTeam = () => {
                     };
                     awards().then(awards_result => {
                         var data = {
+                            rankingPoint: 0,
                             info: result.value,
                             awards: awards_result
                         };
@@ -686,11 +689,13 @@ window.recordCreate = async (numbers = null, uuid = null) => {
                 },
                 validationMessage: 'Please enter valid team numbers(Check if you leave blank there or use ZH comma)',
                 confirmButtonText: 'Start',
+                showCancelButton: 'Cancel'
             }).then((result) => {
                 if(result.isConfirmed) {
                     return result.value;
                 }
             });
+        if(numbers === undefined) return;
     }
     var formHtml = "";
     var recordTabHtml = "";
@@ -915,6 +920,7 @@ window.addTeamViaTBA = () => {
                                             });
     
                                 var data = {
+                                    rankingPoint: 0,
                                     info: info,
                                     awards: awards
                                 };
