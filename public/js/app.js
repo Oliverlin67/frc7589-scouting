@@ -35780,21 +35780,31 @@ window.recordCreate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorR
           JSON.parse((0,firebase_remote_config__WEBPACK_IMPORTED_MODULE_3__.getValue)(remoteConfig, "parameters").asString()).forEach(function (parameter) {
             switch (parameter.type) {
               case "textarea":
-                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <textarea id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : "", "</textarea>\n                            </div>\n                        </div>");
+                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <textarea id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" rows=\"5\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : "", "</textarea>\n                            </div>\n                        </div>");
+                break;
+              case "checkbox":
+                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block font-medium text-gray-700 text-center\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <input id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 mx-auto block w-28 h-16 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" ").concat(data[parameter.alias] !== undefined ? data[parameter.alias] == '1' ? "checked" : "" : "", " placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                            </div>\n                        </div>");
                 break;
               case "heading":
                 var sizes = ["text-4xl", "text-3xl", "text-2xl", "text-xl", "text-lg", "text-base"];
                 formHtml += "<div>\n                            <div class=\"mt-1\">\n                                <h".concat(parameter.size, " class=\"").concat(sizes[parameter.size - 1], " font-bold\">").concat(parameter.name, "</h").concat(parameter.size, ">\n                            </div>\n                        </div>");
+                break;
+              case "hr":
+                formHtml += "<";
                 break;
               case "select":
                 var options = '';
                 parameter.options.forEach(function (option) {
                   options += "<option value=\"".concat(option.value, "\" ").concat(data[parameter.alias] !== undefined ? data[parameter.alias] == option.value ? "selected" : "" : "", ">").concat(option.name, "</option>");
                 });
-                formHtml += "<div>\n                            <div class=\"mt-1\">\n                                <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                                <select id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">\n                                <option value=\"\" disabled>Select the \"").concat(parameter.name, "\"...</option>\n                                ").concat(options, "\n                                </select>\n                            </div>\n                        </div>");
+                formHtml += "<div>\n                            <div class=\"mt-1\">\n                                <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block font-medium text-gray-700\">").concat(parameter.name, "</label>\n                                <select id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" placeholder=\"").concat(parameter.name, "\">\n                                <option value=\"\" disabled>Select the \"").concat(parameter.name, "\"...</option>\n                                ").concat(options, "\n                                </select>\n                            </div>\n                        </div>");
                 break;
               default:
-                formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block text-sm font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <input id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block ").concat(parameter.type != "checkbox" ? 'w-full' : '', " rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                            </div>\n                        </div>");
+                if (parameter.type == "number") {
+                  formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block font-medium text-center text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1 w-full flex items-center justify-around\">\n                                    <button \n                                        onclick=\"num_dec('").concat(number, "-").concat(parameter.alias, "')\"\n                                        type=\"button\"\n                                        class=\"inline-flex justify-center rounded-md border-transparent bg-teal-600 py-3 px-6 text-4xl font-bold text-white shadow-sm hover:bg-teal-700 focus:outline-none border-teal-500 border-2 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2\"\n                                    >-</button>\n                                    <input id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2\" value=\"").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                                    <button \n                                        onclick=\"num_inc('").concat(number, "-").concat(parameter.alias, "')\"\n                                        type=\"button\"\n                                        class=\"inline-flex justify-center rounded-md border-transparent bg-teal-600 py-3 px-6 text-4xl font-bold text-white shadow-sm hover:bg-teal-700 focus:outline-none border-teal-500 border-2 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2\"\n                                    >+</button>\n                                </div>\n                            </div>\n                        </div>");
+                } else {
+                  formHtml += "<div>\n                            <label for=\"".concat(number, "-").concat(parameter.alias, "\" class=\"block font-medium text-gray-700\">").concat(parameter.name, "</label>\n                            <div class=\"mt-1\">\n                                <input id=\"").concat(number, "-").concat(parameter.alias, "\" name=\"").concat(parameter.alias, "\" class=\"mt-1 block rounded-md border-gray-300 shadow-sm w-full focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2\" value=\"").concat(data[parameter.alias] !== undefined ? data[parameter.alias] : parameter.type == "number" ? 0 : '', "\" placeholder=\"").concat(parameter.name, "\" type=\"").concat(parameter.type, "\"/>\n                            </div>\n                        </div>");
+                }
             }
           });
           if (uuid != null) {
@@ -36060,6 +36070,14 @@ window.searchTeam = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRun
     }
   }, _callee15);
 }));
+window.num_dec = function (id) {
+  var el = document.getElementById(id);
+  if (Number(el.value) > 0) el.value = Number(el.value) - 1;
+};
+window.num_inc = function (id) {
+  var el = document.getElementById(id);
+  el.value = Number(el.value) + 1;
+};
 
 // Event Listener
 

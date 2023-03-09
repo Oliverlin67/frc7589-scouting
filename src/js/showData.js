@@ -616,7 +616,9 @@ window.exportExcel = async (number = null) => {
         });
         XLSX.utils.book_append_sheet(wb, ws, `team #${number}`);
     } else {
-        var new_json = {};
+        var new_json = {
+            'all': []
+        };
         records.forEach((record) => {
             var _json = {
                 uuid: record.id
@@ -629,10 +631,13 @@ window.exportExcel = async (number = null) => {
                 new_json[record.data().team_number] = [];
             }
             new_json[record.data().team_number].push(_json);
+            _json['team_number'] = record.data().team_number;
+            new_json['all'].push(_json);
         });
         Object.keys(new_json).forEach((teamKey) => {
             ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
-            XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
+            if(teamKey != "all") XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
+            else XLSX.utils.book_append_sheet(wb, ws, `All Team`);
         });
     }
     

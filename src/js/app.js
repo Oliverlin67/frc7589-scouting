@@ -711,9 +711,17 @@ window.recordCreate = async (numbers = null, uuid = null) => {
             switch(parameter.type) {
                 case "textarea":
                     formHtml += `<div>
-                            <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
+                            <label for="${number}-${parameter.alias}" class="block font-medium text-gray-700">${parameter.name}</label>
                             <div class="mt-1">
                                 <textarea id="${number}-${parameter.alias}" name="${parameter.alias}" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}">${data[parameter.alias] !== undefined ? data[parameter.alias] : ""}</textarea>
+                            </div>
+                        </div>`;
+                    break;
+                case "checkbox":
+                    formHtml += `<div>
+                            <label for="${number}-${parameter.alias}" class="block font-medium text-gray-700 text-center">${parameter.name}</label>
+                            <div class="mt-1">
+                                <input id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 mx-auto block w-28 h-16 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" ${data[parameter.alias] !== undefined ? (data[parameter.alias] == '1' ? "checked" : "") : ""} placeholder="${parameter.name}" type="${parameter.type}"/>
                             </div>
                         </div>`;
                     break;
@@ -732,6 +740,9 @@ window.recordCreate = async (numbers = null, uuid = null) => {
                             </div>
                         </div>`;
                     break;
+                case "hr":
+                    formHtml += `<`;
+                    break;
                 case "select":
                     var options = '';
                     parameter.options.forEach((option) => {
@@ -739,7 +750,7 @@ window.recordCreate = async (numbers = null, uuid = null) => {
                     });
                     formHtml += `<div>
                             <div class="mt-1">
-                                <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
+                                <label for="${number}-${parameter.alias}" class="block font-medium text-gray-700">${parameter.name}</label>
                                 <select id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="${parameter.name}">
                                 <option value="" disabled>Select the "${parameter.name}"...</option>
                                 ${options}
@@ -747,13 +758,35 @@ window.recordCreate = async (numbers = null, uuid = null) => {
                             </div>
                         </div>`;
                     break;
+
                 default:
-                    formHtml += `<div>
-                            <label for="${number}-${parameter.alias}" class="block text-sm font-medium text-gray-700">${parameter.name}</label>
-                            <div class="mt-1">
-                                <input id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block ${parameter.type != "checkbox" ? 'w-full' : ''} rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${data[parameter.alias] !== undefined ? data[parameter.alias] : (parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
+
+                    if(parameter.type == "number") {
+                        formHtml += `<div>
+                            <label for="${number}-${parameter.alias}" class="block font-medium text-center text-gray-700">${parameter.name}</label>
+                            <div class="mt-1 w-full flex items-center justify-around">
+                                    <button 
+                                        onclick="num_dec(\'${number}-${parameter.alias}\')"
+                                        type="button"
+                                        class="inline-flex justify-center rounded-md border-transparent bg-teal-600 py-3 px-6 text-4xl font-bold text-white shadow-sm hover:bg-teal-700 focus:outline-none border-teal-500 border-2 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                                    >-</button>
+                                    <input id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm p-2" value="${data[parameter.alias] !== undefined ? data[parameter.alias] : (parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
+                                    <button 
+                                        onclick="num_inc(\'${number}-${parameter.alias}\')"
+                                        type="button"
+                                        class="inline-flex justify-center rounded-md border-transparent bg-teal-600 py-3 px-6 text-4xl font-bold text-white shadow-sm hover:bg-teal-700 focus:outline-none border-teal-500 border-2 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                                    >+</button>
+                                </div>
                             </div>
                         </div>`;
+                    } else {
+                        formHtml += `<div>
+                            <label for="${number}-${parameter.alias}" class="block font-medium text-gray-700">${parameter.name}</label>
+                            <div class="mt-1">
+                                <input id="${number}-${parameter.alias}" name="${parameter.alias}" class="mt-1 block rounded-md border-gray-300 shadow-sm w-full focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" value="${data[parameter.alias] !== undefined ? data[parameter.alias] : (parameter.type == "number" ? 0 : '')}" placeholder="${parameter.name}" type="${parameter.type}"/>
+                            </div>
+                        </div>`;
+                    }
             }
         });
         if(uuid != null) {
@@ -954,6 +987,16 @@ window.searchTeam = async () => {
             showTeam(result.value);
         }
     });
+}
+
+window.num_dec = (id) => {
+    var el = document.getElementById(id);
+    if(Number(el.value) > 0) el.value = Number(el.value) - 1;
+}
+
+window.num_inc = (id) => {
+    var el = document.getElementById(id);
+    el.value = Number(el.value) + 1;
 }
 
 // Event Listener

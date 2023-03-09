@@ -60989,7 +60989,9 @@ window.exportExcel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRu
           });
           XLSX.utils.book_append_sheet(wb, ws, "team #".concat(number));
         } else {
-          new_json = {};
+          new_json = {
+            'all': []
+          };
           records.forEach(function (record) {
             var _json = {
               uuid: record.id
@@ -61002,10 +61004,12 @@ window.exportExcel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRu
               new_json[record.data().team_number] = [];
             }
             new_json[record.data().team_number].push(_json);
+            _json['team_number'] = record.data().team_number;
+            new_json['all'].push(_json);
           });
           Object.keys(new_json).forEach(function (teamKey) {
             ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
-            XLSX.utils.book_append_sheet(wb, ws, "team #".concat(teamKey));
+            if (teamKey != "all") XLSX.utils.book_append_sheet(wb, ws, "team #".concat(teamKey));else XLSX.utils.book_append_sheet(wb, ws, "All Team");
           });
         }
         XLSX.writeFile(wb, 'scouting-export.xlsx');
