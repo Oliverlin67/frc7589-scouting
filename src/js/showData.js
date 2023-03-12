@@ -192,24 +192,6 @@ async function getAllRecords(number = null) {
     }
 }
 
-/*
-async function getAllRecords(number = null, qs = []) {
-    showMessage("Fetching records...");
-
-    const conditions = [];
-    if(qs.length != 0) {
-        qs.forEach((q) => {
-            conditions.push(where(q.field, q.symbol, q.value))
-        });
-    }
-    if(number != null) {
-        return await getDocs(query(collection(db, "records"), where("team_number", "==", number), ...conditions));
-    } else {
-        return await getDocs(query(collection(db, "records"), ...conditions));
-    }
-}
-*/
-
 async function getTeams(number = null) {
     showMessage("Fetching teams...");
     if(number != null) {
@@ -302,6 +284,13 @@ const bgColors = [
     "#5c6912",
     "#c7c8e9"
 ];
+
+/*
+var allTeamChartData = {
+    labels: [],
+    datasets: {}
+};
+*/
 
 window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");

@@ -60517,23 +60517,6 @@ function _changeDBMode() {
 function getAllRecords() {
   return _getAllRecords.apply(this, arguments);
 }
-/*
-async function getAllRecords(number = null, qs = []) {
-    showMessage("Fetching records...");
-
-    const conditions = [];
-    if(qs.length != 0) {
-        qs.forEach((q) => {
-            conditions.push(where(q.field, q.symbol, q.value))
-        });
-    }
-    if(number != null) {
-        return await getDocs(query(collection(db, "records"), where("team_number", "==", number), ...conditions));
-    } else {
-        return await getDocs(query(collection(db, "records"), ...conditions));
-    }
-}
-*/
 function _getAllRecords() {
   _getAllRecords = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
     var number,
@@ -60687,6 +60670,14 @@ var allTeamChart = new chart_js_auto__WEBPACK_IMPORTED_MODULE_5__.Chart(document
   }
 });
 var bgColors = ["#36a2eb", "#ff6383", "#4cbfc0", "#fe9e40", "#9966ff", "#ffcd57", "#c8cbce", "#8e8466", "#17c91f", "#4456e8", "#a02964", "#5c6912", "#c7c8e9"];
+
+/*
+var allTeamChartData = {
+    labels: [],
+    datasets: {}
+};
+*/
+
 window.getTeamIndex = function () {
   copyHTML("team-index", "loadingScreen");
   showPage("teamIndexScreen");
