@@ -2,7 +2,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where, addDoc, setDoc, getDocs, Timestamp, disableNetwork, enableNetwork, getDoc } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence, collection, query, doc, where, orderBy, setDoc, getDocs, Timestamp, disableNetwork, enableNetwork, getDoc } from "firebase/firestore";
 import { getRemoteConfig, getValue, fetchAndActivate } from "firebase/remote-config";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 import { Chart } from 'chart.js/auto';
@@ -192,6 +192,24 @@ async function getAllRecords(number = null) {
     }
 }
 
+/*
+async function getAllRecords(number = null, qs = []) {
+    showMessage("Fetching records...");
+
+    const conditions = [];
+    if(qs.length != 0) {
+        qs.forEach((q) => {
+            conditions.push(where(q.field, q.symbol, q.value))
+        });
+    }
+    if(number != null) {
+        return await getDocs(query(collection(db, "records"), where("team_number", "==", number), ...conditions));
+    } else {
+        return await getDocs(query(collection(db, "records"), ...conditions));
+    }
+}
+*/
+
 async function getTeams(number = null) {
     showMessage("Fetching teams...");
     if(number != null) {
@@ -202,7 +220,7 @@ async function getTeams(number = null) {
             showMessage("Team no found");
         }
     } else {
-        return await getDocs(collection(db, "teams"));
+        return await getDocs(query(collection(db, "teams"), orderBy("rankingPoint", "desc")));
     }
 }
 
@@ -398,7 +416,6 @@ window.getTeamIndex = () => {
                         storeTeam(team.id, teamData);
                     }
                 });
-                console.log(data);
                 updateEleHTML("team-index", html);
                 allTeamChart.data = data;
                 allTeamChart.update();
@@ -595,30 +612,15 @@ const flatten = (data) => {
     return result;
 };
 
-window.exportExcel = async (number = null) => {
+async function getArr(teamNumbers) {
+    var all_team_data = [];
+    var new_json = {};
 
-    const records = await getAllRecords(number);
-
-    const wb = XLSX.utils.book_new();
-    var ws;
-
-    if(number != null) {
-        var new_array = [];
-        records.forEach((record) => {
-            var _json = {
-                uuid: record.id
-            };
-            const record_parameters = flatten(record.data().parameters);
-            Object.keys(record_parameters).forEach((key) => {
-                _json[key] = record_parameters[key];
-            })
-            new_json[record.data().team_number].push(_json);
-        });
-        XLSX.utils.book_append_sheet(wb, ws, `team #${number}`);
-    } else {
-        var new_json = {
-            'all': []
+    for (const teamNumber of teamNumbers) {
+        all_team_data[teamNumber] = {
+            "# Number": teamNumber
         };
+        const records = await getAllRecords(teamNumber);
         records.forEach((record) => {
             var _json = {
                 uuid: record.id
@@ -631,18 +633,157 @@ window.exportExcel = async (number = null) => {
                 new_json[record.data().team_number] = [];
             }
             new_json[record.data().team_number].push(_json);
-            _json['team_number'] = record.data().team_number;
-            new_json['all'].push(_json);
-        });
-        Object.keys(new_json).forEach((teamKey) => {
-            ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
-            if(teamKey != "all") XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
-            else XLSX.utils.book_append_sheet(wb, ws, `All Team`);
         });
     }
-    
-    XLSX.writeFile(wb, 'scouting-export.xlsx');
+    return {
+        all_team_data: all_team_data, 
+        new_json: new_json
+    };
 }
+
+window.exportExcel = async (numbers = "") => {
+    const wb = XLSX.utils.book_new();
+    var ws;
+
+    if(numbers != "") {
+        const teamNumbers = numbers.split(",");
+        var labels = {};
+        var all_team_data = [];
+        var new_json = {};
+        var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+        Object.keys(parameters).forEach((key) => {
+            if(parameters[key].type != "number") return;
+            labels[parameters[key].alias] = {
+                name: parameters[key].name,
+                average: parameters[key].alias != "rankingPoint"
+            };
+            labels[parameters[key].name] = {
+                alias: parameters[key].name,
+                average: parameters[key].alias != "rankingPoint"
+            };
+        });
+        const res =  await getArr(teamNumbers);
+        all_team_data = res.all_team_data;
+        new_json = res.new_json;
+
+        Object.keys(new_json).forEach((teamKey) => {
+            new_json[teamKey].forEach((record) => {
+                Object.keys(record).forEach((recordKey) => {
+                    if(recordKey in labels) {
+                        if(!(labels[recordKey].name in all_team_data[teamKey])) {
+                            all_team_data[teamKey][labels[recordKey].name] = 0;
+                        }
+                        all_team_data[teamKey][labels[recordKey].name] += record[recordKey];
+                    }
+                });
+            });
+            all_team_data.forEach((team) => {
+                Object.keys(team).forEach((all_team_data_team_key) => {
+                    if(all_team_data_team_key != "# Number" && labels[all_team_data_team_key].average) {
+                        team[all_team_data_team_key] /= new_json[teamKey].length;
+                    }
+                });
+            });
+            ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
+            XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
+        });
+        var all_team_data_ws_arr = [];
+        all_team_data.forEach((team) => {
+            if(Object.keys(team).length != 1) all_team_data_ws_arr.push(team);
+        })
+        ws = XLSX.utils.json_to_sheet(all_team_data_ws_arr);
+        XLSX.utils.book_append_sheet(wb, ws, `All Team`);
+        XLSX.writeFile(wb, 'scouting-export.xlsx');
+    } else {
+        const records = await getAllRecords(null);
+        var labels = {};
+        var all_team_data = [];
+        var new_json = {};
+        var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+        Object.keys(parameters).forEach((key) => {
+            if(parameters[key].type != "number") return;
+            labels[parameters[key].alias] = {
+                name: parameters[key].name,
+                average: parameters[key].alias != "rankingPoint"
+            };
+            labels[parameters[key].name] = {
+                alias: parameters[key].name,
+                average: parameters[key].alias != "rankingPoint"
+            };
+        });
+        records.forEach((record) => {
+            var _json = {
+                uuid: record.id
+            };
+            const record_parameters = flatten(record.data().parameters);
+            Object.keys(record_parameters).forEach((key) => {
+                _json[key] = record_parameters[key];
+            })
+            if(!(record.data().team_number in new_json)) {
+                new_json[record.data().team_number] = [];
+            }
+            new_json[record.data().team_number].push(_json);
+        });
+        getTeams().then(async (teams) => {
+            await teams.forEach((team) => {
+                all_team_data[team.id] = {
+                    "# Number": team.id
+                };
+            });
+            await Object.keys(new_json).forEach((teamKey) => {
+                (async () => {
+                    await new_json[teamKey].forEach((record) => {
+                        Object.keys(record).forEach((recordKey) => {
+                            if(recordKey in labels) {
+                                if(!(labels[recordKey].name in all_team_data[teamKey])) {
+                                    all_team_data[teamKey][labels[recordKey].name] = 0;
+                                }
+                                all_team_data[teamKey][labels[recordKey].name] += record[recordKey];
+                            }
+                        });
+                    });
+                    await all_team_data.forEach((team) => {
+                        Object.keys(team).forEach((all_team_data_team_key) => {
+                            if(all_team_data_team_key != "# Number" && labels[all_team_data_team_key].average) {
+                                team[all_team_data_team_key] /= new_json[teamKey].length;
+                            }
+                        });
+                    });
+                })();
+                ws = XLSX.utils.json_to_sheet(new_json[teamKey]);
+                XLSX.utils.book_append_sheet(wb, ws, `team #${teamKey}`);
+            });
+            var all_team_data_ws_arr = [];
+            all_team_data.forEach((team) => {
+                if(Object.keys(team).length != 1) all_team_data_ws_arr.push(team);
+            })
+            ws = XLSX.utils.json_to_sheet(all_team_data_ws_arr);
+            XLSX.utils.book_append_sheet(wb, ws, `All Team`);
+            XLSX.writeFile(wb, 'scouting-export.xlsx');
+        });
+    }
+}
+
+window.selectedExportExcel = async () => {
+    const numbers = await Swal.fire({
+        title: 'Export Data via Team',
+        text: 'enter team numbers(separate by comma)',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off',
+            pattern: '^[0-9]{1,}(?:,[0-9]{1,})*$'
+        },
+        validationMessage: 'Please enter valid team numbers(Check if you leave blank there or use ZH comma)',
+        confirmButtonText: 'Export',
+        showCancelButton: 'Cancel'
+    }).then((result) => {
+        if(result.isConfirmed) {
+            return result.value;
+        }
+    });
+    if(numbers === undefined) return;
+    exportExcel(numbers);
+};
 
 window.searchTeam = async () => {
     const number = await Swal.fire({
