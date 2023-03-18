@@ -202,7 +202,7 @@ async function getTeams(number = null) {
             showMessage("Team no found");
         }
     } else {
-        return await getDocs(query(collection(db, "teams"), orderBy("rankingPoint", "desc")));
+        return await getDocs(collection(db, "teams"));
     }
 }
 
@@ -292,6 +292,58 @@ var allTeamChartData = {
 };
 */
 
+const chartOrderBySelect = document.getElementById("chartOrderBy");
+
+var sortingData = [];
+
+var allTeamChartData = {
+    labels: [],
+    datasets: [
+        {
+            label: "Ranking Point(Total)",
+            alias: "rankingPoint",
+            data: [],
+            backgroundColor: bgColors[0],
+            borderColor: bgColors[0]
+        },
+        {
+            label: "Rate(Average)",
+            alias: "rate",
+            data: [],
+            backgroundColor: bgColors[1],
+            borderColor: bgColors[1]
+        }
+    ]
+};
+
+sortingData.push = async function() {
+    await Array.prototype.push.apply(this, arguments)
+    await sortingData.sort((a, b) => {
+        return b[chartOrderBySelect.value]-a[chartOrderBySelect.value];
+    });
+    return true;
+}
+
+function updateTeamChart() {
+    for(const key in Object.keys(allTeamChartData.datasets)) allTeamChartData.datasets[key].data = [];
+    allTeamChartData.labels = [];
+
+    sortingData.forEach((_data) => {
+        Object.keys(_data).forEach((key) => {
+            if(key == "teamNumber") {
+                if(!allTeamChartData.labels.includes(_data[key])) allTeamChartData.labels.push(_data[key]);
+                return;
+            }
+            const index = allTeamChartData.datasets.findIndex(obj => obj.alias == key);
+            if(index != -1) allTeamChartData.datasets[index].data.push(_data[key]);
+        });
+    });
+
+    console.log(allTeamChartData);
+    allTeamChart.data = allTeamChartData;
+    allTeamChart.update();
+}
+
 window.getTeamIndex = () => {
     copyHTML("team-index", "loadingScreen");
     showPage("teamIndexScreen");
@@ -299,7 +351,7 @@ window.getTeamIndex = () => {
     getTeams().then((teams) => {
         if(!teams.empty) {
             var html = "";
-            var data = {
+            allTeamChartData = {
                 labels: [],
                 datasets: [
                     {
@@ -326,33 +378,33 @@ window.getTeamIndex = () => {
                 }
                 if(parameters[key].type != "number") return;
                 if(parameters[key].alias != "rankingPoint") {
-                    data.datasets.push({
-                        label: parameters[key].name + "(Average)",
+                    allTeamChartData.datasets.push({
+                        label: parameters[key].name + (parameters[key].alias != "rankingPoint" ? "(Average)" : "(Total)"),
                         alias: parameters[key].alias,
                         data: [],
                         backgroundColor: bgColors[i],
                         borderColor: bgColors[i]
                     });
                 }
+                if(parameters[key].alias == "rankingPoint") return;
+                chartOrderBySelect.innerHTML += `<option value="${parameters[key].alias}">${parameters[key].name + "(Average)"}</option>`;
                 i++;
             });
             teams.forEach(async (team) => {
                 var teamData = team.data();
                 var rate = 0;
-                var teamDatasets = {};
-                
-                //var i = 0;
+
+                var _data = {
+                    teamNumber: team.id
+                };
                 await getAllRecords(team.id).then((records) => {
-                    if(!records.empty) data.labels.push(team.id);
-                    records.forEach((record) => {
+                    records.forEach(function (record) {
                         var recordData = record.data();
                         rate += getRate(recordData.parameters);
                         Object.keys(recordData.parameters).forEach((key) => {
-                            const index = data.datasets.findIndex(obj => obj.alias == key);
-                            if(teamDatasets[key] === undefined) teamDatasets[key] = 0;
-                            if(index != -1) {
-                                teamDatasets[key] += recordData.parameters[key];
-                            }
+                            if(typeof recordData.parameters[key] !== "number") return;
+                            if(!(key in _data)) _data[key] = 0;
+                            _data[key] += recordData.parameters[key];
                         });
                     });
                     html += `<div class="bg-blue-100 rounded-lg w-full p-3 lg:p-5 space-y-3" onclick="showTeam('${team.id}')">
@@ -388,26 +440,15 @@ window.getTeamIndex = () => {
                                     <span>Export</span>
                                 </button>
                             </div>`;
-
-                    teamDatasets['rate'] = rate;
-                    Object.keys(teamDatasets).forEach((key) => {
-                        const index = data.datasets.findIndex(obj => obj.alias == key);
-                        if(index != -1 && !isNaN(teamDatasets[key]/records.size)) {
-                            if(key == "rankingPoint") {
-                                data.datasets[index].data.push(teamDatasets[key]);
-                            } else {
-                                data.datasets[index].data.push(teamDatasets[key]/records.size);
-                            }
-                        }
+                    Object.keys(_data).forEach((k) => {
+                        if(k == "rankingPoint" || k == "teamNumber") return;
+                        _data[k] /= records.size;
                     });
-                    if(teamData.rankingPoint != teamDatasets["rankingPoint"] && teamDatasets["rankingPoint"] != undefined) {
-                        teamData.rankingPoint = teamDatasets["rankingPoint"];
-                        storeTeam(team.id, teamData);
-                    }
                 });
+                if(Object.keys(_data).length > 1) sortingData.push(_data);
                 updateEleHTML("team-index", html);
-                allTeamChart.data = data;
-                allTeamChart.update();
+                //allTeamChart.data = data;
+                //allTeamChart.update();
             });
         } else {
             copyHTML("team-index", "noResultScreen");
@@ -928,4 +969,11 @@ document.getElementById('teamContainer').addEventListener('click', (e) => {
             window.document.getElementById('teamContainer').setAttribute('current', e.target.getAttribute('page'));
         }
     }
+});
+
+chartOrderBySelect.addEventListener('change', async () => {
+    await sortingData.sort((a, b) => {
+        return b[chartOrderBySelect.value]-a[chartOrderBySelect.value];
+    });
+    updateTeamChart();
 });
