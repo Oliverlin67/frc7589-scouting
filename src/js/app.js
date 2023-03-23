@@ -166,8 +166,7 @@ async function signIn(email, password) {
             return true;
         })
         .catch((err) => {
-            const errorCode = err.code;
-            const errorMessage = err.message;
+            return false;
         });
 }
 
@@ -528,7 +527,8 @@ window.userLogin = async () => {
                 Swal.showValidationMessage(`Please enter email and password`);
             }
 
-            return await signIn(email, password);
+            if(await signIn(email, password)) return true;
+            else Swal.showValidationMessage(`Username or Password Not Correct!`);
         },
         showClass: {
             popup: `
