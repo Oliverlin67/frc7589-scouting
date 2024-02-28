@@ -256,14 +256,14 @@ window.getRate = (data) => {
     parameters.forEach((parameter) => {
         try {
             if(typeof data[parameter.alias] === "boolean") {
-                formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+                formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
-                formula = formula.replace(parameter.alias, data[parameter.alias]);
+                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
             } else {
-                formula = formula.replace(parameter.alias, "1");
+                formula = formula.replaceAll(parameter.alias, "1");
             }
         } catch(e) {
-            formula = formula.replace(parameter.alias, "1");
+            formula = formula.replaceAll(parameter.alias, "1");
         }
     });
     console.log(formula);
