@@ -254,7 +254,8 @@ window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     parameters.forEach((parameter) => {
-        try {
+        formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+        /*try {
             if(typeof data[parameter.alias] === "boolean") {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
@@ -264,7 +265,7 @@ window.getRate = (data) => {
             }
         } catch(e) {
             formula = formula.replaceAll(parameter.alias, "1");
-        }
+        }*/
     });
     console.log(formula);
     return eval(formula);
