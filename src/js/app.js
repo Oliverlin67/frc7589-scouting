@@ -254,18 +254,19 @@ window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     parameters.forEach((parameter) => {
-        formula = formula.replaceAll(parameter.alias, console.log(data[parameter.alias]));
-        /*try {
+        try {
             if(typeof data[parameter.alias] === "boolean") {
-                formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
+                formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
+                formula = formula.replace(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
-                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                formula = formula.replace(parameter.alias, data[parameter.alias]);
+                formula = formula.replace(parameter.alias, data[parameter.alias]);
             } else {
-                formula = formula.replaceAll(parameter.alias, "1");
+                formula = formula.replace(parameter.alias, "1");
             }
         } catch(e) {
-            formula = formula.replaceAll(parameter.alias, "1");
-        }*/
+            formula = formula.replace(parameter.alias, "1");
+        }
     });
     console.log(formula);
     return eval(formula);
