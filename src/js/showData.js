@@ -231,7 +231,7 @@ window.getRate = (data) => {
             } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
             } else {
-                formula = formula.replaceAll(parameter.alias, "1");
+                formula = formula.replaceAll(parameter.alias, "-3");
             }
         } catch(e) {
             formula = formula.replaceAll(parameter.alias, "1");
