@@ -258,7 +258,7 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                if (data[parameter.alias]/data[parameter.alias] === NaN) {
+                if (typeof(data[parameter.alias]/data[parameter.alias]) === NaN) {
                     formula = formula.replaceAll(parameter.alias, "0");
                 } else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
