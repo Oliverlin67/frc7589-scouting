@@ -258,7 +258,11 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                if (data[parameter.alias] === 0) {
+                    formula = formula.replaceAll(parameter.alias, null);
+                } else {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                }
             } else {
                 formula = formula.replaceAll(parameter.alias, "-3");
             }
