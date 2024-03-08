@@ -257,17 +257,17 @@ window.getRate = (data) => {
         //try {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
-            } else if(data[parameter.alias] !== undefined && !parameter.alias.includes("Attempt")) {
-                //if (typeof(data[parameter.alias]/data[parameter.alias]) === NaN) {
-                    //formula = formula.replaceAll(parameter.alias, "0");
-                //} else {
+            } else if(data[parameter.alias] !== undefined) {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
-                //}
+            } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("Auto") && parameter.alias.includes("Teleop") && data[parameter.alias] == 0) {
+                if(parameter.alias.includes("Attempt")) {
+                    formula = formula.replaceAll(parameter.alias, "1");
+                }
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
             }
         //} catch(e) {
-        //    alert("FUCK! ERROR");
+        //    alert("ERROR!");
         //    formula = formula.replaceAll(parameter.alias, "1");
         //}
     });
