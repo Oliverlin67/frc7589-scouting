@@ -264,7 +264,7 @@ window.getRate = (data) => {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                 //}
             } else {
-                formula = formula.replaceAll(parameter.alias, "-3");
+                formula = formula.replaceAll(parameter.alias, "1");
             }
         //} catch(e) {
         //    alert("FUCK! ERROR");
