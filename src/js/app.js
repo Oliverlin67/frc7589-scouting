@@ -257,12 +257,12 @@ window.getRate = (data) => {
         //try {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
-            } else if(data[parameter.alias] !== undefined) {
-                if (typeof(data[parameter.alias]/data[parameter.alias]) === NaN) {
-                    formula = formula.replaceAll(parameter.alias, "0");
-                } else {
+            } else if(data[parameter.alias] !== undefined && !parameters.includes('Attempt')) {
+                //if (typeof(data[parameter.alias]/data[parameter.alias]) === NaN) {
+                    //formula = formula.replaceAll(parameter.alias, "0");
+                //} else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
-                }
+                //}
             } else {
                 formula = formula.replaceAll(parameter.alias, "-3");
             }
