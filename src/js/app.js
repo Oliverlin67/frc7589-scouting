@@ -259,12 +259,12 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                 if(parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop")) && data[parameter.alias] == 0) {
                     if(parameter.alias.includes("Attempt")) {
                         formula = formula.replaceAll(parameter.alias, "1");
                     }
                 }
+                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
             }
