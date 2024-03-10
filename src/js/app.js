@@ -262,10 +262,10 @@ window.getRate = (data) => {
                 if(parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop")) && data[parameter.alias] == 0) {
                     if(parameter.alias.includes("Attempt")) {
                         formula = formula.replaceAll(parameter.alias, "1");
-                    } else {
-                        formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     }
-                } 
+                } else {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                }
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
             }
