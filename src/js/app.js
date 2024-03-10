@@ -260,11 +260,11 @@ window.getRate = (data) => {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
-                    if(parameter.alias.includes("Attempt") &&　parameter.alias.includes("auto")) {
+                    if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto")) {
                         formula = formula.replaceAll(parameter.alias, "1");
                     }
                 } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop") && data[parameter.alias] == 0){
-                    if(parameter.alias.includes("Attempt") &&　parameter.alias.includes("teleop")) {
+                    if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")) {
                         formula = formula.replaceAll(parameter.alias, "1");
                     }
                 } else {
