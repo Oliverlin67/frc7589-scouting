@@ -265,19 +265,19 @@ window.getRate = (data) => {
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
                     //ratestack.push(data[parameter.alias]);
                     if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto")) {
-                        //if(parameter.alias.includes("amp")){
+                        if(parameter.alias.includes("amp")){
                             formula = formula.replaceAll(parameter.alias, "1");
-                        //} else if(parameter.alias.includes("speaker")){
-                            //formula = formula.replaceAll(parameter.alias, "1");
-                        //}
+                        } else if(parameter.alias.includes("speaker")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        }
                     }
                 } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop") && data[parameter.alias] == 0){
                     if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")) {
-                        //if(parameter.alias.includes("amp")){
+                        if(parameter.alias.includes("amp")){
                             formula = formula.replaceAll(parameter.alias, "1");
-                        //} else if(parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")){
-                            //formula = formula.replaceAll(parameter.alias, "1");
-                        //}
+                        } else if(parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        }
                     }
                 } else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
