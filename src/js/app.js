@@ -253,19 +253,31 @@ async function storeRecord(key, data, silent = false) {
 window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+    //var ratestack = new Stack();
     parameters.forEach((parameter) => {
         //try {
         if(parameter.alias === undefined) return;
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
+                //for (let i = 0; i < data[parameter.alias].length; i++) {ratestack.push(parameter.alias.data[i]);}
+
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
+                    //ratestack.push(data[parameter.alias]);
                     if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto")) {
-                        formula = formula.replaceAll(parameter.alias, "1");
+                        if(parameter.alias.includes("amp")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        } else if(parameter.alias.includes("speaker")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        }
                     }
                 } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop") && data[parameter.alias] == 0){
                     if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")) {
-                        formula = formula.replaceAll(parameter.alias, "1");
+                        if(parameter.alias.includes("amp")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        } else if(parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")){
+                            formula = formula.replaceAll(parameter.alias, "1");
+                        }
                     }
                 } else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
