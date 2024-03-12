@@ -290,7 +290,7 @@ window.getRate = (data) => {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     no_data = true;
                 } else if(parameter.alias.includes("Attempt")) {
-                    if(data[parameter.alias] == 0){
+                    if(data[parameter.alias] == 0 && no_data == true){
                         formula = formula.replaceAll(parameter.alias, "1");
                     } else {
                         formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
