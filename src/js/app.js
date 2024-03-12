@@ -272,7 +272,7 @@ window.getRate = (data) => {
                         for (let times = 0; times < data[parameter.alias].length; times++) {
                             ratestack.push(data[parameter.alias]);
                         }
-                        if(ratestack[0] + ratestack[1] == 0){
+                        if(ratestack.pop() + ratestack.pop() == 0){
                             formula = formula.replaceAll(parameter.alias, "1");
                         }
                     }
