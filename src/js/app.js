@@ -253,7 +253,7 @@ async function storeRecord(key, data, silent = false) {
 window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
-    //var ratestack = new Stack();
+    var ratestack = new Stack();
     parameters.forEach((parameter) => {
         //try {
         if(parameter.alias === undefined) return;
