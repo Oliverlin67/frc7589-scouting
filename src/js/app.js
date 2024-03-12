@@ -285,7 +285,7 @@ window.getRate = (data) => {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
-                    for (let times = 0; times < data[parameter.alias].length; times++) {
+                    for (let times = 0; times < 2; times++) {
                         ratestack.push(data[parameter.alias]);
                     }
                     if(ratestack.pop() + ratestack.pop() == 0){
