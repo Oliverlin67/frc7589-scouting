@@ -284,10 +284,10 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
-                    for (let times = 0; times < 2; times++) {
-                        ratestack.push(data[parameter.alias]);
-                    }
+                for (let times = 0; times < 2; times++) {
+                    ratestack.push(data[parameter.alias]);
+                }
+                if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0){
                     if(ratestack.pop() + ratestack.pop() == 0){
                         formula = formula.replaceAll(parameter.alias, "3");
                     } else {
