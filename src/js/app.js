@@ -279,15 +279,16 @@ window.getRate = (data) => {
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     var ratestack = new Stack();
     parameters.forEach((parameter) => {
+        alert(parameter.alias);
         //try {
         if(parameter.alias === undefined) return;
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                for (let times = 0; times < 2; times++) {
+                /*for (let times = 0; times < 2; times++) {
                     ratestack.push(data[parameter.alias]);
                     alert(ratestack.peek());
-                }
+                }*/
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0){
                     if(ratestack.pop() + ratestack.pop() == 0){
                         formula = formula.replaceAll(parameter.alias, "3");
