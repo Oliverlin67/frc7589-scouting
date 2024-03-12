@@ -289,7 +289,7 @@ window.getRate = (data) => {
                         ratestack.push(data[parameter.alias]);
                     }
                     if(ratestack.pop() + ratestack.pop() == 0){
-                        formula = formula.replaceAll(parameter.alias, "1");
+                        formula = formula.replaceAll(parameter.alias, "3");
                     } else {
                         formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     }
