@@ -277,7 +277,8 @@ function Stack() {
 window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
-    var ratestack = new Stack();
+    //var ratestack = new Stack();
+    var no_data = false;
     parameters.forEach((parameter) => {
         alert(parameter.alias);
         //try {
@@ -285,10 +286,23 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
+                if(!parameter.alias.includes("Attempt") && data[parameter.alias] == 0) {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                    no_data = true;
+                } else if(parameter.alias.includes("Attempt")) {
+                    if(data[parameter.alias] == 0){
+                        formula = formula.replaceAll(parameter.alias, "1");
+                    } else {
+                        formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                    }
+                    no_data = false;
+                } else {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                }
                 /*for (let times = 0; times < 2; times++) {
                     ratestack.push(data[parameter.alias]);
                     alert(ratestack.peek());
-                }*/
+                }
                 if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0){
                     if(ratestack.pop() + ratestack.pop() == 0){
                         formula = formula.replaceAll(parameter.alias, "3");
@@ -303,7 +317,7 @@ window.getRate = (data) => {
                     }
                 } else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
-                }
+                }*/
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
             }
