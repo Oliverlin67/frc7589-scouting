@@ -261,26 +261,21 @@ window.getRate = (data) => {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
                 //for (let i = 0; i < data[parameter.alias].length; i++) {ratestack.push(parameter.alias.data[i]);}
-
-                if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0) {
+                if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto")) {
                     //ratestack.push(data[parameter.alias]);
-                    if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto")) {
-                        if(parameter.alias.includes("amp")){
-                            formula = formula.replaceAll(parameter.alias, "1");
-                        } else if(parameter.alias.includes("speaker")){
-                            formula = formula.replaceAll(parameter.alias, "1");
-                        }
+                    if(parameter.alias.includes("amp") && data[parameter.alias] == 0) {
+                        formula = formula.replaceAll(parameter.alias, "1");
+                    } else if(parameter.alias.includes("speaker") && data[parameter.alias] == 0){
+                        formula = formula.replaceAll(parameter.alias, "1");
                     }
-                } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop") && data[parameter.alias] == 0){
-                    if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")) {
-                        if(parameter.alias.includes("amp")){
-                            formula = formula.replaceAll(parameter.alias, "1");
-                        } else if(parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")){
-                            formula = formula.replaceAll(parameter.alias, "1");
-                        }
+                } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")){
+                    if(parameter.alias.includes("amp") && data[parameter.alias] == 0){
+                        formula = formula.replaceAll(parameter.alias, "1");
+                    } else if((parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")) && data[parameter.alias] == 0){
+                        formula = formula.replaceAll(parameter.alias, "1");
                     }
                 } else {
-                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                 }
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
