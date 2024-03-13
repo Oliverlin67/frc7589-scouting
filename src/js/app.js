@@ -280,7 +280,7 @@ window.getRate = (data) => {
     //var ratestack = new Stack();
     var no_data = false;
     parameters.forEach((parameter) => {
-        alert(parameter.alias);
+        //alert(parameter.alias);
         //try {
         if(parameter.alias === undefined) return;
             if(typeof(data[parameter.alias]) === Boolean) {
@@ -289,6 +289,7 @@ window.getRate = (data) => {
                 if(!parameter.alias.includes("Attempt") && data[parameter.alias] == 0) {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     no_data = true;
+                    alert(parameter.alias);
                 } else if(parameter.alias.includes("Attempt")) {
                     if(data[parameter.alias] == 0 && no_data == true){
                         formula = formula.replaceAll(parameter.alias, "1");
