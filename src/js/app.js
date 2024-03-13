@@ -286,11 +286,11 @@ window.getRate = (data) => {
             if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                if(!parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop")) && data[parameter.alias] == 0) {
+                if(!parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop")) && (parameter.alias.includes("amp") || parameter.alias.includes("speaker")) && data[parameter.alias] == 0) {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     no_data = true;
                     alert(parameter.alias);
-                } else if(parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop"))) {
+                } else if(parameter.alias.includes("Attempt")) {
                     if(data[parameter.alias] == 0 && no_data == true){
                         formula = formula.replaceAll(parameter.alias, "1");
                     } else {
