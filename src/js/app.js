@@ -249,49 +249,22 @@ async function storeRecord(key, data, silent = false) {
 
 // ----------------
 // Utils
-function Stack() {
-    var items = [];
-    this.push = function(element) {
-     items.push(element);
-    }
-    this.pop = function() {
-     return items.pop();
-    }
-    this.peek = function() {
-     return items[items.length - 1];
-    }
-    this.isEmpty = function() {
-     return items.length === 0;
-    }
-    this.clear = function() {
-     items = [];
-    }
-    this.size = function() {
-     return items.length;
-    }
-    this.print = function() {
-     console.log(items.toString());
-    }
-   }
-
 window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
-    //var ratestack = new Stack();
     var no_data = false;
     parameters.forEach((parameter) => {
-        //alert(parameter.alias);
-        //try {
-        if(parameter.alias === undefined) return;
-            if(typeof(data[parameter.alias]) === Boolean) {
+        try {
+            if(parameter.alias === undefined) {
+                return;
+            } else if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
             } else if(data[parameter.alias] !== undefined) {
-                if(!parameter.alias.includes("Attempt") && (parameter.alias.includes("auto") || parameter.alias.includes("teleop")) && (parameter.alias.includes("amp") || parameter.alias.includes("speaker")) && data[parameter.alias] == 0) {
+                if(!parameter.alias.includes("Attempt") && (parameter.alias.includes("amp") || parameter.alias.includes("speaker")) && data[parameter.alias] == 0) {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                     no_data = true;
-                    alert(parameter.alias);
                 } else if(parameter.alias.includes("Attempt")) {
-                    if(data[parameter.alias] == 0 && no_data == true){
+                    if(data[parameter.alias] == 0 && no_data == true) {
                         formula = formula.replaceAll(parameter.alias, "1");
                     } else {
                         formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
@@ -300,32 +273,13 @@ window.getRate = (data) => {
                 } else {
                     formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
                 }
-                /*for (let times = 0; times < 2; times++) {
-                    ratestack.push(data[parameter.alias]);
-                    alert(ratestack.peek());
-                }
-                if(parameter.alias.includes("Attempt") && parameter.alias.includes("auto") && data[parameter.alias] == 0){
-                    if(ratestack.pop() + ratestack.pop() == 0){
-                        formula = formula.replaceAll(parameter.alias, "3");
-                    } else {
-                        formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
-                    }
-                } else if(parameter.alias.includes("Attempt") && parameter.alias.includes("teleop")){
-                    if(parameter.alias.includes("amp") && data[parameter.alias] == 0){
-                        formula = formula.replaceAll(parameter.alias, "1");
-                    } else if((parameter.alias.includes("speaker") || parameter.alias.includes("Amplified")) && data[parameter.alias] == 0){
-                        formula = formula.replaceAll(parameter.alias, "1");
-                    }
-                } else {
-                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
-                }*/
             } else {
                 formula = formula.replaceAll(parameter.alias, "1");
             }
-        //} catch(e) {
-        //    alert("ERROR!");
-        //    formula = formula.replaceAll(parameter.alias, "1");
-        //}
+        } catch(e) {
+            alert("ERROR!");
+            formula = formula.replaceAll(parameter.alias, "1");
+        }
     });
     console.log(formula);
     return eval(formula);
