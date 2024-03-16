@@ -253,7 +253,7 @@ window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
     var no_data = false;
-    parameters.forEach((parameter) => {
+    parameters.forEach((parameter) => { 
         try {
             if(parameter.alias === undefined) {
                 return;
