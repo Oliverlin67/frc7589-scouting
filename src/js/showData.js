@@ -224,14 +224,29 @@ async function storeTeam(key, data, silent = false) {
 window.getRate = (data) => {
     var formula = getValue(remoteConfig, "formula").asString();
     var parameters = JSON.parse(getValue(remoteConfig, "parameters").asString());
+    var no_data = false;
     parameters.forEach((parameter) => {
         try {
-            if(typeof data[parameter.alias] === "boolean") {
+            if(parameter.alias === undefined) {
+                return;
+            } else if(typeof(data[parameter.alias]) === Boolean) {
                 formula = formula.replaceAll(parameter.alias, data[parameter.alias] ? 1 : 0);
-            } else if(data[parameter.alias] !== undefined && !parameters.contains("Attempts")) {
-                formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+            } else if(data[parameter.alias] !== undefined) {
+                if(!parameter.alias.includes("Attempt") && (parameter.alias.includes("amp") || parameter.alias.includes("speaker")) && data[parameter.alias] == 0) {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                    no_data = true;
+                } else if(parameter.alias.includes("Attempt")) {
+                    if(data[parameter.alias] == 0 && no_data == true) {
+                        formula = formula.replaceAll(parameter.alias, "1");
+                    } else {
+                        formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                    }
+                    no_data = false;
+                } else {
+                    formula = formula.replaceAll(parameter.alias, data[parameter.alias]);
+                }
             } else {
-                formula = formula.replaceAll(parameter.alias, "-3");
+                formula = formula.replaceAll(parameter.alias, "1");
             }
         } catch(e) {
             formula = formula.replaceAll(parameter.alias, "1");
