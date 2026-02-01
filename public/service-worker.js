@@ -1,6 +1,10 @@
-const cacheName = "frc7589_scouting";
+//定義常數(const) cacheName="槽的名字"
+const cacheName = "frc7589_scouting";   
 
-const contentToCache = [
+
+
+//定義 contentToCache =在下載app時要抓取下來的資料(沒有填入路徑的話離線時就不會出現那個東西)
+const contentToCache = [    
     "./assets/app.css",
     "./index.html",
     "./showData.html",
